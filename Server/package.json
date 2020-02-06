@@ -7,8 +7,7 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node ./dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./dist"
   },
   "author": "",
   "license": "ISC",
