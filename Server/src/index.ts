@@ -4,7 +4,7 @@ import * as http from "http";
 // import * as Clients from "./Clients";
 
 const app = express();
-const port = 8081; // default port to listen
+const port = 8080; // default port to listen
 
 // define a route handler for the default home page
 app.get("/", (req, res) => {
@@ -24,7 +24,7 @@ const ParseMessage = (message: string) => {
 };
 
 //initialize the WebSocket server instance
-const wss = new WebSocket.Server({ port: 8080, server });
+const wss = new WebSocket.Server({ port: 8081, server });
 
 wss.on("connection", (ws: WebSocket) => {
   //connection is up, let's add a simple simple event
