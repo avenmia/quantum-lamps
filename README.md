@@ -1,5 +1,7 @@
 # quantum-lamps
 
+[![Node CI](https://github.com/avenmia/quantum-lamps/workflows/Node%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Node+CI%22) [![Docker CI](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CI%22) [![Docker CD](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CD/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CD%22)
+
 ## Docker
 
 ### Client
@@ -30,6 +32,6 @@ docker run -p 8080 -d quantum-lamps-server
 
 Added GitHub Actions workflow to deploy to Azure Web App.
 Will require AZURE_WEBAPP_PUBLISH_PROFILE secret to be configured in GitHub.
-image
+
 ![Publish profile download screenshot](https://user-images.githubusercontent.com/5100938/73516915-98d2fc80-43bf-11ea-8727-6b2e0f7046a8.png)
 The Azure Web App is also expected to have the environment variables configured (https://docs.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings)

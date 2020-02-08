@@ -10,12 +10,7 @@ jobs:
     - name: Client - build image
       run: |
         pushd ./Client
-        docker build -t docker.pkg.github.com/avenmia/quantum-lights/client .
-    - name: Client - build image
-      if: github.ref == 'refs/heads/master'
-      run: |
-        docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
-        docker push docker.pkg.github.com/avenmia/quantum-lights/client
+        docker build -t docker.pkg.github.com/avenmia/quantum-lights/client:$(date +%Y%m%d%H%M%S) .
   build-server:
     runs-on: ubuntu-latest
     steps:
@@ -23,9 +18,4 @@ jobs:
     - name: Server - build image
       run: |
         pushd ./Server
-        docker build -t docker.pkg.github.com/avenmia/quantum-lights/server .
-    - name: Server - push image
-      if: github.ref == 'refs/heads/master'
-      run: |
-        docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
-        docker push docker.pkg.github.com/avenmia/quantum-lights/server
+        docker build -t docker.pkg.github.com/avenmia/quantum-lights/server:$(date +%Y%m%d%H%M%S) .

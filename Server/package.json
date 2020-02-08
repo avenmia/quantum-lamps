@@ -4,13 +4,12 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore .",
+    "pretest": "eslint src/**/*.ts",
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node ./dist"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@types/websocket": "^1.0.0",
     "@types/ws": "^7.2.1",

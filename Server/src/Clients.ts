@@ -4,5 +4,5 @@ export type Client = {
 }
 
 export type Clients = {
-    [key:string] : Client;
+    [key: string]: Client;
 }
