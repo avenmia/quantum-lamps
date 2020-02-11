@@ -1,10 +1,11 @@
 import * as http from "http";
 import * as WebSocket from "ws";
+import { Client } from "./Client";
  
 const req = http.request(
   {
     host: "localhost",
-    port: 8080,
+    port: 8081,
     method: "POST",
   },
   response => {
@@ -19,13 +20,61 @@ req.write(JSON.stringify({
 req.end();
 
 // remove this hardcode
-const clientSocket = new WebSocket.default("ws://localhost:8080");
+const clientSocket = new WebSocket.default("ws://localhost:8081");
+
+var client: Client;
 
 clientSocket.on("open", () => {
     console.log("Client connection open");
-    clientSocket.send("Hello from client");
+    var message: Message = {
+        type : MessageType.Init,
+        message: "Init"
+    }
+    clientSocket.send(JSON.stringify(message));
 });
 
 clientSocket.on("message", (message: string) => {
     console.log("client received: %s", message);
+    var returnMessage: string = parseMessage(message);
+    clientSocket.send(returnMessage);
 });
+
+function parseMessage(message:string){
+    console.log(`parsing message ${message}`);
+    var serverMessage : Message = JSON.parse(message);
+    console.log(serverMessage);
+    console.log("Sending initial data");
+    switch(serverMessage.type){
+        case MessageType.Username: 
+            client = new Client(serverMessage.message); 
+            console.log(`setting up client: ${client.username}`);
+            
+            var dataMessage: Message = {
+                type : MessageType.Input,
+                message: "255,255,255"
+            }
+            return JSON.stringify(dataMessage);
+        case MessageType.Init: return JSON.stringify({type: MessageType.Input, message: "init"});
+        case MessageType.Input: return JSON.stringify({type: MessageType.Close, message: "setting data then closing connection"});
+        case MessageType.Close: clientSocket.close();
+    }
+    // if (message.search("username:") > -1){
+    //     var clientUserName = message.replace("username:", "");
+    //     console.log(clientUserName);
+    //     client = new Client(clientUserName);
+    //     console.log(`Added client ${client.username}`);
+    // }
+}
+
+enum MessageType {
+    Close,
+    Init,
+    Input,
+    Username
+}
+
+interface Message
+{
+    type: MessageType,
+    message: string
+}

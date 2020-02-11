@@ -1,8 +1,14 @@
-export type Client = {
+import * as WebSocket from 'ws';
+export class Client {
+
+    constructor(userName: string, ws: WebSocket){
+        this.username = userName;
+        this.client = ws;
+    }
     username: string;
-    client: object;
+    client: WebSocket;
 }
 
-export type Clients = {
-    [key: string]: Client;
-}
+// export type Clients = {
+//     [key: string]: Client;
+// }
