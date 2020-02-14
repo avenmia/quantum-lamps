@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ port: 8081, server });
-
+console.log('test')
 var num = 0;
 
 wss.on("connection", (ws: WebSocket) => {
@@ -28,9 +28,10 @@ wss.on("connection", (ws: WebSocket) => {
   num = num + 1;
   people.push(client);
   people.forEach(p => console.log(`person name ${p.username}`));
-
+  ws.send("welcome");
   //connection is up, let's add a simple simple event
   ws.on("message", (message: string) => {
+      console.log("Received message")
       parseMessage(message, ws, client);
     //log the received message and send it back to the client
 
@@ -38,27 +39,42 @@ wss.on("connection", (ws: WebSocket) => {
         ws.send("closing socket");
     })
   });
-
-
 });
 
 function parseMessage(message:string, ws: WebSocket, client: Client){
     
     var incomingMessage : Message = JSON.parse(message);
+    console.log("incoming message: %o", incomingMessage)
     switch(incomingMessage.type){
         case MessageType.Init:
+            console.log(`Init received from: ${client.username}`)
             var clientInfoMessage: Message = {
                 type : MessageType.Username,
                 message : client.username
             }
+            console.log("Sending: %o", clientInfoMessage)
             ws.send(JSON.stringify(clientInfoMessage)); break;
-        case MessageType.Input: BroadcastMessage(message, client); break;
-        case MessageType.Close: ws.close();
+        case MessageType.Input:
+            console.log(`Input message received`) 
+            BroadcastMessage(message, client); break;
+        case MessageType.Closing:
+            var closingMessage: Message = {
+                type: MessageType.Close,
+                message : "closing connection"
+            } 
+            console.log("Closing message received")
+            ws.send(JSON.stringify(closingMessage))
+        case MessageType.Close:
+            // Close out message will contain username to delete
+            console.log("Removing", incomingMessage.message)
+            people = people.filter(p => p.username != incomingMessage.message)
+            ws.close();
     }
 }
 
 function BroadcastMessage(message:string, client: Client){
-    
+    let parsedMessage = JSON.parse(message)
+    console.log("broadcasting info message: %o", parsedMessage)
     var outgoingMessage: Message = {
         type: MessageType.Input,
         message: "new info"
@@ -71,6 +87,7 @@ function BroadcastMessage(message:string, client: Client){
 
 enum MessageType {
     Close,
+    Closing,
     Init,
     Input,
     Username
