@@ -41,9 +41,21 @@ wss.on("connection", (ws: WebSocket) => {
   })
   .on(MessageType.Auth, payload => people = Event.onAuthencation(payload, ws, people))
   .on(MessageType.Input, payload => Event.onInput(payload, people))
+  .on(MessageType.Listening, payload => Event.onListening(payload))
   .on(MessageType.Close, payload => Event.onClose(payload, people))
 
 });
+
+// Every 5 seconds check state of connections
+setInterval(() => {
+  people = people.filter(p => p.client.readyState != WebSocket.CLOSED)
+  console.log("Current people")
+  people.forEach(p => console.log(p.username));
+}, 2000);
+
+function RemoveClient(c : Client){
+  people = people.filter(p => p.username != c.username);
+}
 
 function parseMessage(message: string, ws: WebSocket, client: Client) {
   const incomingMessage: Message = JSON.parse(message);

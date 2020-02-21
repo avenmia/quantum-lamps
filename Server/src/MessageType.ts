@@ -3,5 +3,6 @@ export enum MessageType {
   Closing = "Closing",
   Auth = "Auth",
   Input = "Input",
+  Listening = "Listening",
   Username = "Username"
 };
