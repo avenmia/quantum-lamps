@@ -15,8 +15,12 @@ export function onAuthencation(payload:any, num:number, ws:any, people: Client[]
     }
 }
 
-export function onInit(payload:any){
+export function onInput(payload:any){
   console.log("Init received")
+}
+
+export function onClose(payload:any){
+  
 }
 
 export function ClientResponse(type: string, message: any){

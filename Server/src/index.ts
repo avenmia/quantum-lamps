@@ -5,6 +5,7 @@ import * as http from "http";
 import { Client } from "./Clients";
 import SharedSecret from "./Secret";
 import * as Event from "./EventHandlers";
+import { MessageType } from "./MessageType";
 
 const port = parseInt(process.env.PORT) || 8081;
 const app = express();
@@ -31,14 +32,16 @@ wss.on("connection", (ws: WebSocket) => {
     try {
       const event = JSON.parse(message);
       console.log("Received a message %o", message);
-      console.log("type: %o, payload: %o",event.type, event.message)
-      ws.emit("authenticate", event.message);
+      console.log("type: %o, payload: %o",event.type, event.message);
+      ws.emit(MessageType.Auth.toString(), event.message);
     } catch (err) {
       console.error("JSON Parse Failed");
     }
   })
-  .on("authenticate", payload => Event.onAuthencation(payload, num, ws, people))
-  .on("init", payload => Event.onInit(payload))
+  .on(MessageType.Auth, payload => Event.onAuthencation(payload, num, ws, people))
+  .on(MessageType.Input, payload => Event.onInput(payload))
+  .on(MessageType.Close, payload => Event.onClose(payload))
+  
 
   //connection is up, let's add a simple simple event
   // ws.on("message", (message: string) => {
@@ -56,7 +59,7 @@ function parseMessage(message: string, ws: WebSocket, client: Client) {
   const incomingMessage: Message = JSON.parse(message);
   console.log("incoming message: %o", incomingMessage);
   switch (incomingMessage.type) {
-    case MessageType.Init:
+    case MessageType.Auth:
       console.log(`Init received from: ${client.username}`);
       const clientInfoMessage: Message = {
         type: MessageType.Username,
@@ -99,13 +102,13 @@ function BroadcastMessage(message: string, client: Client) {
     .forEach(c => c.client.send(JSON.stringify(outgoingMessage)));
 }
 
-enum MessageType {
-  Close,
-  Closing,
-  Auth,
-  Input,
-  Username
-}
+// enum MessageType {
+//   Close,
+//   Closing,
+//   Auth,
+//   Input,
+//   Username
+// }
 
 interface Message {
   type: MessageType;
