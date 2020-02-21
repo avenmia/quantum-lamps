@@ -6,6 +6,7 @@ import { Client } from "./Clients";
 import SharedSecret from "./Secret";
 import * as Event from "./EventHandlers";
 import { MessageType } from "./MessageType";
+import { Message } from "./Message";
 
 const port = parseInt(process.env.PORT) || 8081;
 const app = express();
@@ -63,7 +64,7 @@ function parseMessage(message: string, ws: WebSocket, client: Client) {
       console.log(`Init received from: ${client.username}`);
       const clientInfoMessage: Message = {
         type: MessageType.Username,
-        message: client.username
+        payload: client.username
       };
       console.log("Sending: %o", clientInfoMessage);
       ws.send(JSON.stringify(clientInfoMessage));
@@ -75,14 +76,14 @@ function parseMessage(message: string, ws: WebSocket, client: Client) {
     case MessageType.Closing:
       const closingMessage: Message = {
         type: MessageType.Close,
-        message: "closing connection"
+        payload: "closing connection"
       };
       console.log("Closing message received");
       ws.send(JSON.stringify(closingMessage));
     case MessageType.Close:
       // Close out message will contain username to delete
-      console.log("Removing", incomingMessage.message);
-      people = people.filter(p => p.username != incomingMessage.message);
+      console.log("Removing", incomingMessage.payload);
+      people = people.filter(p => p.username != incomingMessage.payload);
       ws.close();
   }
 }
@@ -92,7 +93,7 @@ function BroadcastMessage(message: string, client: Client) {
   console.log("broadcasting info message: %o", parsedMessage);
   const outgoingMessage: Message = {
     type: MessageType.Input,
-    message: "new info"
+    payload: "new info"
   };
   console.log(`Broadcasting to clients ${outgoingMessage}`);
   console.log("All people");
@@ -100,19 +101,6 @@ function BroadcastMessage(message: string, client: Client) {
   people
     .filter(p => p.username != client.username)
     .forEach(c => c.client.send(JSON.stringify(outgoingMessage)));
-}
-
-// enum MessageType {
-//   Close,
-//   Closing,
-//   Auth,
-//   Input,
-//   Username
-// }
-
-interface Message {
-  type: MessageType;
-  message: string;
 }
 
 clients.forEach(c => c.close());
