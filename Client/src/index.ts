@@ -58,12 +58,6 @@ function parseMessage(message:string){
         case MessageType.Input: return JSON.stringify({type: MessageType.Close, message: "setting data then closing connection"});
         case MessageType.Close: clientSocket.close();
     }
-    // if (message.search("username:") > -1){
-    //     var clientUserName = message.replace("username:", "");
-    //     console.log(clientUserName);
-    //     client = new Client(clientUserName);
-    //     console.log(`Added client ${client.username}`);
-    // }
 }
 
 enum MessageType {

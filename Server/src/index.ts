@@ -1,18 +1,12 @@
 import express from "express";
 import * as WebSocket from "ws";
 import * as http from "http";
-import * as dotenv from "dotenv";
+//import * as dotenv from "dotenv";
 import { Client } from "./Clients";
+import SharedSecret from "./Secret";
+import * as Event from "./EventHandlers";
 
-dotenv.config();
-const port = parseInt(process.env.PORT) || 8080;
-const sharedSecret = process.env.SHARED_SECRET;
-
-if (!sharedSecret) {
-  console.error("Set the SHARED_SECRET environment variable");
-  process.exit(1);
-}
-
+const port = parseInt(process.env.PORT) || 8081;
 const app = express();
 
 const clients: WebSocket[] = [];
@@ -25,16 +19,9 @@ app.get("/", (req, res) => {
 
 const server = http.createServer(app);
 
-const clientResponse = (type: string, message: any) => {
-  return JSON.stringify({
-    type,
-    message
-  });
-};
-
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ port, server });
-console.log("test");
+console.log("Starting Websocket server");
 let num = 0;
 
 wss.on("connection", (ws: WebSocket) => {
@@ -43,23 +30,16 @@ wss.on("connection", (ws: WebSocket) => {
   ws.on("message", (message: string) => {
     try {
       const event = JSON.parse(message);
-      ws.emit(event.type, event.payload);
+      console.log("Received a message %o", message);
+      console.log("type: %o, payload: %o",event.type, event.message)
+      ws.emit("authenticate", event.message);
     } catch (err) {
       console.error("JSON Parse Failed");
     }
-  }).on("authenticate", payload => {
-    console.log(payload);
-    console.log(sharedSecret);
-    if (sharedSecret === payload.secret) {
-      const client = new Client("client" + num.toString(), ws);
-      num = num++;
-      people.push(client);
-      people.forEach(p => console.log(`person name ${p.username}`));
-    } else {
-      ws.send(clientResponse("error", "Invalid token"));
-      ws.close();
-    }
-  });
+  })
+  .on("authenticate", payload => Event.onAuthencation(payload, num, ws, people))
+  .on("init", payload => Event.onInit(payload))
+
   //connection is up, let's add a simple simple event
   // ws.on("message", (message: string) => {
   //   console.log("Received message");
@@ -122,7 +102,7 @@ function BroadcastMessage(message: string, client: Client) {
 enum MessageType {
   Close,
   Closing,
-  Init,
+  Auth,
   Input,
   Username
 }
