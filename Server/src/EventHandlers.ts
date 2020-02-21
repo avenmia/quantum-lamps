@@ -1,26 +1,29 @@
 import SharedSecret from "./Secret";
 import { Client } from "./Clients";
 
-export function onAuthencation(payload:any, num:number, ws:any, people: Client[]) {
-    console.log(payload);
-    console.log(SharedSecret);
+let num = 0
+
+export function onAuthencation(payload:any, ws:any, people: Client[]) {
     if (SharedSecret === payload.secret) {
+      num = people.length + 1;
+      console.log("Secret matches")
       const client = new Client("client" + num.toString(), ws);
-      num = num++;
       people.push(client);
       people.forEach(p => console.log(`person name ${p.username}`));
+      return people;
     } else {
       ws.send(ClientResponse("error", "Invalid token"));
       ws.close();
     }
 }
 
-export function onInput(payload:any){
-  console.log("Init received")
+export function onInput(payload:any, people: Client[]){
+  console.log("Input received")
 }
 
-export function onClose(payload:any){
-  
+export function onClose(payload:any, people: Client[]){
+  // Find person and remove them
+  console.log("Closing connection")
 }
 
 export function ClientResponse(type: string, message: any){
