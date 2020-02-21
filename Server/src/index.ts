@@ -31,29 +31,18 @@ wss.on("connection", (ws: WebSocket) => {
   //ws.send("Hi there, I am a WebSocket server");
   ws.on("message", (message: string) => {
     try {
-      const event = JSON.parse(message);
+      const event : Message = JSON.parse(message);
       console.log("Received a message %o", message);
-      console.log("type: %o, payload: %o",event.type, event.message);
-      ws.emit(MessageType.Auth.toString(), event.message);
+      console.log("type: %o, payload: %o",event.type, event.payload);
+      ws.emit(event.type, event.payload);
     } catch (err) {
       console.error("JSON Parse Failed");
     }
   })
-  .on(MessageType.Auth, payload => Event.onAuthencation(payload, num, ws, people))
+  .on(MessageType.Auth, payload => people = Event.onAuthencation(payload, ws, people))
   .on(MessageType.Input, payload => Event.onInput(payload))
-  .on(MessageType.Close, payload => Event.onClose(payload))
-  
+  .on(MessageType.Close, payload => Event.onClose(payload, people))
 
-  //connection is up, let's add a simple simple event
-  // ws.on("message", (message: string) => {
-  //   console.log("Received message");
-  //   // parseMessage(message, ws, client);
-  //   //log the received message and send it back to the client
-
-  //   ws.on("close", (message: string) => {
-  //     ws.send("closing socket");
-  //   });
-  // });
 });
 
 function parseMessage(message: string, ws: WebSocket, client: Client) {
