@@ -40,7 +40,7 @@ wss.on("connection", (ws: WebSocket) => {
     }
   })
   .on(MessageType.Auth, payload => people = Event.onAuthencation(payload, ws, people))
-  .on(MessageType.Input, payload => Event.onInput(payload))
+  .on(MessageType.Input, payload => Event.onInput(payload, people))
   .on(MessageType.Close, payload => Event.onClose(payload, people))
 
 });
