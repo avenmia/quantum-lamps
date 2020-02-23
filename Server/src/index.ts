@@ -1,9 +1,7 @@
 import express from "express";
 import * as WebSocket from "ws";
 import * as http from "http";
-//import * as dotenv from "dotenv";
 import { Client } from "./Clients";
-import SharedSecret from "./Secret";
 import * as Event from "./EventHandlers";
 import { MessageType } from "./MessageType";
 import { Message } from "./Message";
@@ -15,7 +13,8 @@ const clients: WebSocket[] = [];
 let people: Client[] = [];
 
 // define a route handler for the default home page
-app.get("/", (req, res) => {
+app.get("/", (req, res) =>
+{
   res.send("Hello world!");
 });
 
@@ -26,41 +25,44 @@ const wss = new WebSocket.Server({ port, server });
 console.log("Starting Websocket server");
 let num = 0;
 
-wss.on("connection", (ws: WebSocket) => {
+wss.on("connection", (ws: WebSocket) =>
+{
   //send immediately a feedback to the incoming connection
   //ws.send("Hi there, I am a WebSocket server");
-  ws.on("message", (message: string) => {
-    try {
-      const event : Message = JSON.parse(message);
+  ws.on("message", (message: string) =>
+  {
+    try
+    {
+      const event: Message = JSON.parse(message);
       console.log("Received a message %o", message);
-      console.log("type: %o, payload: %o",event.type, event.payload);
+      console.log("type: %o, payload: %o", event.type, event.payload);
       ws.emit(event.type, event.payload);
-    } catch (err) {
+    } catch (err)
+    {
       console.error("JSON Parse Failed");
     }
   })
-  .on(MessageType.Auth, payload => people = Event.onAuthencation(payload, ws, people))
-  .on(MessageType.Input, payload => Event.onInput(payload, people))
-  .on(MessageType.Listening, payload => Event.onListening(payload))
-  .on(MessageType.Close, payload => Event.onClose(payload, people))
-
+    .on(MessageType.Auth, payload => people = Event.onAuthencation(payload, ws, people))
+    .on(MessageType.Input, payload => Event.onInput(payload, people))
+    .on(MessageType.Listening, payload => Event.onListening(payload))
+    .on(MessageType.Close, payload => Event.onClose(payload, people))
 });
 
-// Every 5 seconds check state of connections
-setInterval(() => {
+// Every 2 seconds check state of connections
+// Todo
+setInterval(() =>
+{
   people = people.filter(p => p.client.readyState != WebSocket.CLOSED)
   console.log("Current people")
   people.forEach(p => console.log(p.username));
 }, 2000);
 
-function RemoveClient(c : Client){
-  people = people.filter(p => p.username != c.username);
-}
-
-function parseMessage(message: string, ws: WebSocket, client: Client) {
+function parseMessage(message: string, ws: WebSocket, client: Client)
+{
   const incomingMessage: Message = JSON.parse(message);
   console.log("incoming message: %o", incomingMessage);
-  switch (incomingMessage.type) {
+  switch (incomingMessage.type)
+  {
     case MessageType.Auth:
       console.log(`Init received from: ${client.username}`);
       const clientInfoMessage: Message = {
@@ -89,7 +91,8 @@ function parseMessage(message: string, ws: WebSocket, client: Client) {
   }
 }
 
-function BroadcastMessage(message: string, client: Client) {
+function BroadcastMessage(message: string, client: Client)
+{
   let parsedMessage = JSON.parse(message);
   console.log("broadcasting info message: %o", parsedMessage);
   const outgoingMessage: Message = {
@@ -104,4 +107,3 @@ function BroadcastMessage(message: string, client: Client) {
     .forEach(c => c.client.send(JSON.stringify(outgoingMessage)));
 }
 
-clients.forEach(c => c.close());
