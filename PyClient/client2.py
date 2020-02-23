@@ -1,33 +1,36 @@
 import asyncio
 import websockets
 import json
-from enum import IntEnum
+import os
+from enum import Enum
 
 CONNECTION_OPEN = True
 USERNAME = ""
 
-class MessageType(IntEnum):
-    Close = 0,
-    Closing = 1
-    Init = 2
-    Input = 3
-    UserName = 4
+class MessageType(Enum):
+    Close = "Close"
+    Closing = "Closing"
+    Auth = "Auth"
+    Input = "Input"
+    Listening = "Listening"
+    UserName = "UserName"
 
 class Message:
-    def __init__(self, message_type, message):
+    def __init__(self, message_type, payload):
         self.message_type = message_type
-        self.message = message
+        self.payload = payload
 
 def parseMessage(message):
     global CONNECTION_OPEN
     global USERNAME
-    rec_message = Message(message['type'], message['message'])
-    print(rec_message.message_type)
-    print(rec_message.message)
-    if rec_message.message_type == MessageType.UserName:
-        print("Username")
-        USERNAME = rec_message.message
-        send_message = json.dumps({'type': MessageType.Input, 'message': '255,255,255,0'})
+    rec_message = Message(message['type'], message['payload'])
+    print("Message type:",rec_message.message_type)
+    print("Message payload:", rec_message.payload)
+    if rec_message.message_type == "UserName":
+        print("Now Listening")
+        USERNAME = rec_message.payload
+        print(USERNAME)
+        send_message = json.dumps({'type': 'Listening', 'payload': 'Listening'})
         return send_message
     elif rec_message.message_type == MessageType.Input:
         print("Received input")
@@ -67,5 +70,6 @@ async def init_connection(message):
         #print("received message", json.load(message))
 
 while CONNECTION_OPEN:
-    message = json.dumps({'type': MessageType.Init, 'message': 'Init'})
+    SHARED_SECRET = os.environ['SHARED_SECRET']
+    message = json.dumps({'type': "Auth", 'payload': {'username': 'Mike', 'secret': SHARED_SECRET}})
     asyncio.get_event_loop().run_until_complete(init_connection(message))
