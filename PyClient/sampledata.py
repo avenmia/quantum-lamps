@@ -1,5 +1,8 @@
 import time
 import threading
+import signal
+import json
+from quantum_lamps import sendMessage, CLIENT_WS,MessageType
 from random import randrange
 
 count = 0
@@ -21,6 +24,10 @@ class CountThread(object):
             count = count + 1
             if count % 7 == 0:
                 current_data = count + randrange(25)
+                message = json.dumps(
+            {'type': MessageType.Input.name, 'payload': current_data})
+                if CLIENT_WS is not None:
+                    sendMessage(CLIENT_WS, message)
             time.sleep(self.interval)
 
 def get_current_data():

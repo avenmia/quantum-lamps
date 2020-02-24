@@ -1,0 +1,2682 @@
+Starting background process
+Shared secret whale
+Starting background task
+Count is: 0
+Initial message: {"type": "Auth", "payload": {"username": "Mike", "secret": "whale"}}
+{"type":"Username","payload":"Mike"}
+Username
+Mike
+Username
+Count is: 1
+Count is: 2
+Count is: 3
+Count is: 4
+Count is: 5
+Sending message to server after not idle
+Input
+26
+Received input
+Incoming data is 26
+Data is: 26
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 26
+Count is: 6
+Count is: 7
+Count is: 8
+Count is: 9
+Count is: 10
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 11
+Sending message to server after not idle
+Input
+25
+Received input
+Incoming data is 25
+Data is: 25
+Count is: 12
+Count is: 13
+Count is: 14
+Count is: 15
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 25
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 16
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 17
+Sending message to server after not idle
+Input
+27
+Received input
+Incoming data is 27
+Data is: 27
+Count is: 18
+Count is: 19
+Count is: 20
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 27
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 21
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 22
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 23
+Sending message to server after not idle
+Input
+48
+Received input
+Incoming data is 48
+Data is: 48
+Count is: 24
+Count is: 25
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 48
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 26
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 27
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 28
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 29
+Sending message to server after not idle
+Input
+36
+Received input
+Incoming data is 36
+Data is: 36
+Count is: 30
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 36
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 31
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 32
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 33
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 34
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 35
+Sending message to server after not idle
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 43
+Input
+43
+Received input
+Setting current data to 43
+Incoming data is 43
+Data is: 4
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 43
+Count is: 36
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 37
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 38
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 39
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 40
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 41
+Sending message to server after not idle
+Input
+49
+Received input
+Incoming data is 49
+Data is: 49
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 49
+Count is: 42
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 43
+Count is: 44
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 45
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 46
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 47
+Sending message to server after not idle
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 57
+Input
+57
+Received input
+Setting current data to 57
+Incoming data is 57
+Data is: 4
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 57
+Count is: 48
+Count is: 49
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 50
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 51
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 52
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 53
+Sending message to server after not idle
+Input
+67
+Received input
+Incoming data is 67
+Data is: 67
+Count is: 54
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 67
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 55
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 56
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 57
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 58
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 59
+Sending message to server after not idle
+Input
+82
+Received input
+Incoming data is 82
+Data is: 82
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 82
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 60
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 61
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 62
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 63
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 64
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 65
+Sending message to server after not idle
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 88
+Input
+88
+Received input
+Setting current data to 88
+Incoming data is 88
+Data is: 4
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 88
+Count is: 66
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 67
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 68
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 69
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 70
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 71
+Sending message to server after not idle
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 87
+Input
+87
+Received input
+Setting current data to 87
+Incoming data is 87
+Data is: 4
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 87
+Count is: 72
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 73
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 74
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 75
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 76
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 77
+Sending message to server after not idle
+Input
+81
+Received input
+Incoming data is 81
+Data is: 81
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 81
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 78
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 79
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 80
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 81
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 82
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 83
+Sending message to server after not idle
+Input
+91
+Received input
+Incoming data is 91
+Data is: 91
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 91
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 84
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 85
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 86
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 87
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 88
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 89
+Sending message to server after not idle
+Input
+90
+Received input
+Incoming data is 90
+Data is: 90
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 90
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 90
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 91
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 92
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 93
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 94
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 95
+Sending message to server after not idle
+Input
+97
+Received input
+Incoming data is 97
+Data is: 97
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 97
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 96
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 97
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 98
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 99
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 100
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 101
+Sending message to server after not idle
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 120
+Input
+120
+Received input
+Setting current data to 120
+Incoming data is 120
+Data is: 4
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 120
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 102
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 103
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 104
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 105
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 106
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 107
+Sending message to server after not idle
+Input
+108
+Received input
+Incoming data is 108
+Data is: 108
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 108
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 108
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 109
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 110
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 111
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 112
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 113
+Sending message to server after not idle
+Input
+136
+Received input
+Incoming data is 136
+Data is: 136
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 136
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 114
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 115
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 116
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 117
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 118
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 119
+Sending message to server after not idle
+Input
+129
+Received input
+Incoming data is 129
+Data is: 129
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 129
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 120
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 121
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 122
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 123
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 124
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 125
+Sending message to server after not idle
+Input
+145
+Received input
+Incoming data is 145
+Data is: 145
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 145
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 126
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 127
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 128
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 129
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 130
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 131
+Sending message to server after not idle
+Input
+134
+Received input
+Incoming data is 134
+Data is: 134
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 134
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 132
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 133
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 134
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 135
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 136
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 137
+Sending message to server after not idle
+Input
+156
+Received input
+Incoming data is 156
+Data is: 156
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 156
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 138
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 139
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 140
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 141
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 142
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 143
+Sending message to server after not idle
+Input
+161
+Received input
+Incoming data is 161
+Data is: 161
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 161
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 144
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 145
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 146
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 147
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 148
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 149
+Sending message to server after not idle
+Input
+151
+Received input
+Incoming data is 151
+Data is: 151
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 151
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 150
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 151
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 152
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 153
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 154
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 155
+Sending message to server after not idle
+Input
+156
+Received input
+Incoming data is 156
+Data is: 156
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 156
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 156
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 157
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 158
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 159
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 160
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 161
+Sending message to server after not idle
+Input
+183
+Received input
+Incoming data is 183
+Data is: 183
+Input
+4
+Received input
+Setting current data to 4
+Incoming data is 4
+Data is: 183
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 162
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 163
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Count is: 164
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
+Input
+4
+Received input
+Incoming data is 4
+Data is: 4
