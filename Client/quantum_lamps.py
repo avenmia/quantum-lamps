@@ -6,9 +6,15 @@ import websockets
 import json
 import threading
 import time
-from lights import calculate_idle
 from random import randrange
 from enum import Enum
+from lights import calculate_idle #, client_connect_var, ctx, contextvars
+
+from dotenv import load_dotenv
+load_dotenv()
+SHARED_SECRET = os.environ['SHARED_SECRET']
+WS_URI = os.environ['WS_URI']
+
 
 CLIENT_WS = None
 
@@ -27,7 +33,7 @@ class Message:
         self.payload = payload
 
 async def parseMessage(ws, message):
-    global CONNECTION_OPEN
+    #global CONNECTION_OPEN
     send_message = ""
     rec_message = Message(message['type'], message['payload'])
     print(rec_message.message_type)
@@ -62,17 +68,17 @@ def HandleInput(payload):
 
 def HandleClosing():
     global USERNAME
-    global CONNECTION_OPEN
-    CONNECTION_OPEN = False
+    #global CONNECTION_OPEN
+    #CONNECTION_OPEN = False
     print("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
 
 def HandleClose():
-    global CONNECTION_OPEN
+    #global CONNECTION_OPEN
     # Shouldn't get hit
     print("Close connection")
-    CONNECTION_OPEN = False
+    #CONNECTION_OPEN = False
 
 async def sendMessage(ws, message, recieve):
     await ws.send(message)
@@ -91,16 +97,26 @@ async def handleMessages(ws, message):
         pass
 
 async def init_connection(message):
-    # calculate_idle(3)
     print("Initial message:", message)
     global CONNECTION_OPEN
     global CLIENT_WS
-    uri = "ws://localhost:8081"
+    uri = WS_URI
     async with websockets.connect(uri) as websocket:
+        print("Setting Connection open to true")
         CONNECTION_OPEN = True
+        # client_connect_var.set(True)
+        # print("Printing ctx after set")
+        # print("Does client connect exist?", client_connect_var in ctx)
+        # print("Current client connect value:", ctx[client_connect_var])
+        # print("Value from the getter:", client_connect_var.get())
+        # print("Where tf is this", client_connect_var)
+        # print("CTX in init_connection:", ctx)
         CLIENT_WS = websocket
         # send init message
+        print("Sending message")
         await websocket.send(message)
+        print("Connection is open")
+        print("Printing init_connection address", hex(id(CONNECTION_OPEN))) 
         while CONNECTION_OPEN:
             await handleMessages(websocket, message)
             # if GPIO.input(15) == GPIO.LOW:
@@ -145,15 +161,11 @@ def set_current_data(val):
 print("Starting background process")
 
 async def main():
-    while True:
-        SHARED_SECRET = os.environ['SHARED_SECRET']
-        print("Shared secret", SHARED_SECRET)
-        start_light = asyncio.create_task(run())
-        #start_light = asyncio.create_task(calculate_idle(3))
-        message = json.dumps({'type': "Auth", 'payload': {
+    message = json.dumps({'type': "Auth", 'payload': {
                             'username': 'Mike', 'secret': SHARED_SECRET}})
-        await asyncio.gather(init_connection(message), start_light)
-        asyncio.get_event_loop()
-        #await asyncio.gather(init_connection(message), count_task)
+    loop = asyncio.get_event_loop()
+    start_light = asyncio.create_task(calculate_idle(3))
+    await asyncio.gather(init_connection(message), start_light)
 
+#ctx.run(asyncio.run(main()))
 asyncio.run(main())
