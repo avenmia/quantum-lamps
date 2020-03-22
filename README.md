@@ -1,6 +1,6 @@
 # quantum-lamps
 
-[![Node CI](https://github.com/avenmia/quantum-lamps/workflows/Node%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Node+CI%22) [![Docker CI](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CI%22) [![Docker CD](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CD/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CD%22)
+[![Node CI](https://github.com/avenmia/quantum-lamps/workflows/Node%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Node+CI%22) [![Python CI](https://github.com/avenmia/quantum-lamps/workflows/Python%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Python+CI%22) [![Docker CI](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CI/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CI%22) [![Docker CD](https://github.com/avenmia/quantum-lamps/workflows/Docker%20CD/badge.svg)](https://github.com/avenmia/quantum-lamps/actions?query=workflow%3A%22Docker+CD%22)
 
 ## Docker
 
