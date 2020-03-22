@@ -12,7 +12,6 @@ LED_COUNT = 16  # Number of LED pixels.
 LED_PIN = board.D18  # GPIO pin
 LED_BRIGHTNESS = .1  # LED brightness
 LED_ORDER = neopixel.RGBW  # order of LED colors. May also be RGB, GRBW, or RGBW
-CONNECTION_OPEN = False
 
 USERNAME = ""
 STATE = "IDLE"
@@ -106,11 +105,10 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
-async def calculate_idle(t):
+async def calculate_idle(t, handler):
     orig_time = t
     global STATE
     global prevColor
-    global CONNECTION_OPEN
     while True:
         x_arr = []
         y_arr = []
@@ -126,24 +124,30 @@ async def calculate_idle(t):
             # remember prev color
             await do_fade(prevColor, newColor)
             prevColor = newColor
+            handler.set_light_data(newColor)
             await asyncio.sleep(.2)
             t -= .2
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
-
-        print("Connection global:", CONNECTION_OPEN)
-        print("Printing light address", hex(id(CONNECTION_OPEN)))
-        if is_idle and STATE == "NOT IDLE" and CONNECTION_OPEN:
+        is_connected = handler.get_connection()
+        print("Handler connection in lights:", handler.get_connection())
+        if is_idle and STATE == "NOT IDLE" and is_connected:
             STATE = "IDLE"
-            print("Sending color")
+            curr_color = handler.get_light_data()
+            print("Sending color", curr_color)
             t = orig_time
             await asyncio.sleep(1)
-        elif is_idle and CONNECTION_OPEN:
+        elif is_idle and is_connected:
             # Check for data
             STATE = "IDLE"
-            print("Receiving data")
+            print("Pretending to send for now")
+            curr_color = handler.get_light_data()
+            handler.create_message("Input", curr_color)
+            message = handler.get_message()
+            await handler.send_message(message)
+            print("Message sent from idle")
             t = orig_time
             await asyncio.sleep(1)
-        elif is_idle and not CONNECTION_OPEN:
+        elif is_idle and not is_connected:
             print("Idle and not connected")
             await rainbow_cycle(0.001)    # rainbow cycle with 1ms delay per step
             t = orig_time

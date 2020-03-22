@@ -4,6 +4,7 @@ import os
 import asyncio
 import websockets
 import json
+from message_handler import MessageHandler
 from enum import Enum
 import lights
 
@@ -63,7 +64,7 @@ def HandleInput(payload):
 
 def HandleClosing():
     global USERNAME
-    lights.CONNECTION_OPEN = False
+    #lights.CONNECTION_OPEN = False
     print("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
@@ -72,7 +73,7 @@ def HandleClosing():
 def HandleClose():
     # Shouldn't get hit
     print("Close connection")
-    lights.CONNECTION_OPEN = False
+    #lights.CONNECTION_OPEN = False
 
 
 async def sendMessage(ws, message, recieve):
@@ -92,21 +93,23 @@ async def handleMessages(ws, message):
         pass
 
 
-async def init_connection(message):
+async def init_connection(message, handler):
     print("Initial message:", message)
     global CLIENT_WS
     uri = WS_URI
     async with websockets.connect(uri) as websocket:
         print("Setting Connection open to true")
-        lights.CONNECTION_OPEN = True
+        #lights.CONNECTION_OPEN = True
+        handler.set_connection(True)
+        handler.set_websocket(websocket)
+        is_connected = handler.get_connection()
+        print("handler connection:", is_connected)
         CLIENT_WS = websocket
         # send init message
         print("Sending message")
         await websocket.send(message)
         print("Connection is open")
-        print("Printing init_connection address",
-              hex(id(lights.CONNECTION_OPEN)))
-        while lights.CONNECTION_OPEN:
+        while is_connected:
             await handleMessages(websocket, message)
             # if GPIO.input(15) == GPIO.LOW:
             #         print("Button was pushed")
@@ -116,9 +119,10 @@ async def init_connection(message):
 
 
 async def main():
+    handler = MessageHandler()
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
-    start_light = asyncio.create_task(lights.calculate_idle(3))
-    await asyncio.gather(init_connection(message), start_light)
+    start_light = asyncio.create_task(lights.calculate_idle(3, handler))
+    await asyncio.gather(init_connection(message, handler), start_light)
 
 asyncio.run(main())
