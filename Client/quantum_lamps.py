@@ -8,7 +8,7 @@ import threading
 import time
 from random import randrange
 from enum import Enum
-from lights import calculate_idle #, client_connect_var, ctx, contextvars
+import lights
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -98,26 +98,19 @@ async def handleMessages(ws, message):
 
 async def init_connection(message):
     print("Initial message:", message)
-    global CONNECTION_OPEN
+    #lights.CONNECTION_OPEN
     global CLIENT_WS
     uri = WS_URI
     async with websockets.connect(uri) as websocket:
         print("Setting Connection open to true")
-        CONNECTION_OPEN = True
-        # client_connect_var.set(True)
-        # print("Printing ctx after set")
-        # print("Does client connect exist?", client_connect_var in ctx)
-        # print("Current client connect value:", ctx[client_connect_var])
-        # print("Value from the getter:", client_connect_var.get())
-        # print("Where tf is this", client_connect_var)
-        # print("CTX in init_connection:", ctx)
+        lights.CONNECTION_OPEN = True
         CLIENT_WS = websocket
         # send init message
         print("Sending message")
         await websocket.send(message)
         print("Connection is open")
-        print("Printing init_connection address", hex(id(CONNECTION_OPEN))) 
-        while CONNECTION_OPEN:
+        print("Printing init_connection address", hex(id(lights.CONNECTION_OPEN))) 
+        while lights.CONNECTION_OPEN:
             await handleMessages(websocket, message)
             # if GPIO.input(15) == GPIO.LOW:
             #         print("Button was pushed")
@@ -164,8 +157,7 @@ async def main():
     message = json.dumps({'type': "Auth", 'payload': {
                             'username': 'Mike', 'secret': SHARED_SECRET}})
     loop = asyncio.get_event_loop()
-    start_light = asyncio.create_task(calculate_idle(3))
+    start_light = asyncio.create_task(lights.calculate_idle(3))
     await asyncio.gather(init_connection(message), start_light)
 
-#ctx.run(asyncio.run(main()))
 asyncio.run(main())
