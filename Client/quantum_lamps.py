@@ -33,7 +33,6 @@ class Message:
         self.payload = payload
 
 async def parseMessage(ws, message):
-    #global CONNECTION_OPEN
     send_message = ""
     rec_message = Message(message['type'], message['payload'])
     print(rec_message.message_type)
@@ -98,7 +97,6 @@ async def handleMessages(ws, message):
 
 async def init_connection(message):
     print("Initial message:", message)
-    #lights.CONNECTION_OPEN
     global CLIENT_WS
     uri = WS_URI
     async with websockets.connect(uri) as websocket:
@@ -117,41 +115,6 @@ async def init_connection(message):
         await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
         await websocket.close()
 ##########################################################
-
-## Collect background data ##
-count = 0
-current_data = 0
-
-async def run():
-    print("Starting background task")
-    global current_data
-    global count
-    while True:
-        print("Count is:", count)
-        count = count + 1
-        if count % 6 == 0:
-            current_data = count + randrange(25)
-            message = json.dumps(
-        {'type': MessageType.Input.name, 'payload': current_data})
-            if CLIENT_WS is not None:
-                print("Sending message to server after not idle")
-                await sendMessage(CLIENT_WS, message, False)
-        
-        await asyncio.sleep(1)   
-
-def get_current_data():
-    global current_data
-    return current_data
-
-def set_current_data(val):
-    global current_data
-    if current_data != val:
-        current_data = val
-    print("Setting current data to", current_data)
-
-
-##########################################################
-print("Starting background process")
 
 async def main():
     message = json.dumps({'type': "Auth", 'payload': {
