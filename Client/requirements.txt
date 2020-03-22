@@ -3,3 +3,5 @@ adafruit-circuitpython-neopixel
 adafruit-blinka
 RPi.GPIO
 websockets
+python-dotenv
+contextvars
