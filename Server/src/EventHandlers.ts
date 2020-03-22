@@ -1,52 +1,58 @@
 import SharedSecret from "./Secret";
 import { Client } from "./Clients";
 import { MessageType } from "./MessageType";
-import { setImmediate } from "timers";
 
-var num = 0
+let num = 0;
 
-export function onAuthencation(payload:any, ws:any, people: Client[]) {
-    if (SharedSecret === payload.secret) {
-      //TODO: Change this num
-      num = num++;
-      console.log("Secret matches")
-      const client = new Client(payload.username, ws);
-      people.push(client);
-      people.forEach(p => console.log(`person name ${p.username}`));
-      ws.send(ClientResponse(MessageType.Username, client.username));
-      return people;
-    } else {
-      ws.send(ClientResponse("error", "Invalid token"));
-      ws.close();
-      return people;
-    }
+export function ClientResponse(type: string, payload: any) {
+  return JSON.stringify({
+    type,
+    payload
+  });
 }
 
-export function onInput(payload:any, people: Client[]){
+export function onAuthentication(payload: any, ws: any, people: Client[]) {
+  if (SharedSecret === payload.secret) {
+    //TODO: Change this num
+    num = num++;
+    console.log("Secret matches");
+    const client = new Client(payload.username, ws);
+    people.push(client);
+    people.forEach(p => console.log(`person name ${p.username}`));
+    ws.send(ClientResponse(MessageType.Username, client.username));
+    return people;
+  } else {
+    ws.send(ClientResponse("error", "Invalid token"));
+    ws.close();
+    return people;
+  }
+}
+
+export function onInput(payload: any, people: Client[]) {
   console.log("Input received");
-  if (payload !== 0 && typeof payload !== 'undefined'){
+  if (payload !== 0 && typeof payload !== "undefined") {
     console.log("Sending message");
-    const replacer = (key : any, value:any) => typeof value === 'undefined' ? "0" : value;
-    let message = JSON.stringify({"type": "Input", "payload": payload }, replacer);
+    const replacer = (key: any, value: any) =>
+      typeof value === "undefined" ? "0" : value;
+    const message = JSON.stringify(
+      { type: "Input", payload: payload },
+      replacer
+    );
     people.forEach(p => p.client.send(message));
   }
 }
 
-export function onListening(payload: any, people: Client[]){
+export function onListening(payload: any, people: Client[]) {
   console.log("Client is listening");
   setTimeout(() => {
-    people.forEach(p => p.client.send(JSON.stringify({"type": "Input", "payload": "4" })))
-  }, 5000)
+    people.forEach(p =>
+      p.client.send(JSON.stringify({ type: "Input", payload: "4" }))
+    );
+  }, 5000);
 }
 
-export function onClose(payload:any, people: Client[]){
+export function onClose(payload: any, people: Client[]) {
   // Find person and remove them
+  console.log(payload, people);
   console.log("Closing connection");
 }
-
-export function ClientResponse(type: string, payload: any){
-    return JSON.stringify({
-      type,
-      payload
-    });
-  };
