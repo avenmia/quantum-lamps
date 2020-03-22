@@ -153,16 +153,9 @@ async def calculate_idle(t):
             t -= .2
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
 
-        # print("Client connect")
-        # client_connect = client_connect_var.get()
-        # print("CCV Before idle check", client_connect_var)
-        # print("CTX Before idle check", ctx)
-        # print("Variable in ctx?", client_connect_var in ctx)
-        # print("CTX connect var Before idle check", ctx[client_connect_var])
-        # print("CTX connect var Before idle check using get", ctx.get(client_connect_var))
-        # print("Connect open is:", client_connect)
         print("Connection global:", CONNECTION_OPEN)
-        print("Printing light address", hex(id(CONNECTION_OPEN))) 
+        print("Printing light address", hex(id(CONNECTION_OPEN)))
+        #CONNECTION_OPEN = True 
         if is_idle and STATE == "NOT IDLE" and CONNECTION_OPEN:
             STATE = "IDLE"
             print("Sending color")
