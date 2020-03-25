@@ -105,6 +105,13 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
+async def set_lamp_light(color1):
+    strip.fill(color1)
+    strip.show()
+    # TODO: Keep lamp the same color until not idle
+    await asyncio.sleep(3)
+
+
 async def calculate_idle(t, handler):
     orig_time = t
     global STATE

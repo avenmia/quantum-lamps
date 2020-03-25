@@ -40,7 +40,7 @@ async def parseMessage(ws, message):
     if rec_message.message_type == MessageType.Username.name:
         send_message = HandleUsername(rec_message.payload)
     elif rec_message.message_type == MessageType.Input.name:
-        send_message = HandleInput(rec_message.payload)
+        send_message = await HandleInput(rec_message.payload)
     elif rec_message.message_type == MessageType.Closing.name:
         send_message = HandleClosing()
     elif rec_message.message_type == MessageType.Close.name:
@@ -56,15 +56,19 @@ def HandleUsername(payload):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-def HandleInput(payload):
-    print("Received input")
+async def HandleInput(payload):
+    data = clean_incoming_data(payload)
+    await lights.set_lamp_light(data)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
+def clean_incoming_data(payload):
+    return tuple(payload)
+
+
 def HandleClosing():
     global USERNAME
-    #lights.CONNECTION_OPEN = False
     print("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
@@ -73,7 +77,6 @@ def HandleClosing():
 def HandleClose():
     # Shouldn't get hit
     print("Close connection")
-    #lights.CONNECTION_OPEN = False
 
 
 async def sendMessage(ws, message, recieve):
@@ -83,7 +86,7 @@ async def sendMessage(ws, message, recieve):
         message = await parseMessage(ws, server_message)
 
 
-async def handleMessages(ws, message):
+async def handleMessages(ws, message, handler):
     try:
         async for message in ws:
             print(message)
@@ -99,7 +102,7 @@ async def init_connection(message, handler):
     uri = WS_URI
     async with websockets.connect(uri) as websocket:
         print("Setting Connection open to true")
-        #lights.CONNECTION_OPEN = True
+
         handler.set_connection(True)
         handler.set_websocket(websocket)
         is_connected = handler.get_connection()
@@ -110,7 +113,7 @@ async def init_connection(message, handler):
         await websocket.send(message)
         print("Connection is open")
         while is_connected:
-            await handleMessages(websocket, message)
+            await handleMessages(websocket, message, handler)
             # if GPIO.input(15) == GPIO.LOW:
             #         print("Button was pushed")
         await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
