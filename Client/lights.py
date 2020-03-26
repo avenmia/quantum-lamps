@@ -115,6 +115,7 @@ async def set_lamp_light(color1, handler):
         await calculate_idle(3, handler)
     await asyncio.sleep(3)
 
+
 async def handle_lamp_state(is_idle, handler):
     global STATE
     is_connected = handler.get_connection()
@@ -143,6 +144,7 @@ async def handle_lamp_state(is_idle, handler):
         await asyncio.sleep(1)
         print("Is not idle")
 
+
 async def change_current_light(t, handler):
     global prevColor
     x_arr = []
@@ -164,11 +166,10 @@ async def change_current_light(t, handler):
         t -= .2
     return [x_arr, y_arr, z_arr]
 
+
 async def calculate_idle(t, handler):
     orig_time = t
     while True:
         [x_arr, y_arr, z_arr] = await change_current_light(orig_time, handler)
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
         await handle_lamp_state(is_idle, handler)
-        
-        
