@@ -111,10 +111,37 @@ async def set_lamp_light(color1):
     # TODO: Keep lamp the same color until not idle
     await asyncio.sleep(3)
 
+async def handle_lamp_state(is_idle, handler):
+    global STATE
+    is_connected = handler.get_connection()
+    print("Handler connection in lights:", handler.get_connection())
+    if is_idle and STATE == "NOT IDLE" and is_connected:
+        STATE = "IDLE"
+        curr_color = handler.get_light_data()
+        print("Sending color", curr_color)
+        await asyncio.sleep(1)
+    elif is_idle and is_connected:
+        # Check for data
+        STATE = "IDLE"
+        print("Pretending to send for now")
+        curr_color = handler.get_light_data()
+        handler.create_message("Input", curr_color)
+        message = handler.get_message()
+        await handler.send_message(message)
+        print("Message sent from idle")
+        await asyncio.sleep(1)
+    elif is_idle and not is_connected:
+        print("Idle and not connected")
+        await rainbow_cycle(0.001)    # rainbow cycle with 1ms delay per step
+        await asyncio.sleep(1)
+    else:
+        STATE = "NOT IDLE"
+        await asyncio.sleep(1)
+        print("Is not idle")
+
 
 async def calculate_idle(t, handler):
     orig_time = t
-    global STATE
     global prevColor
     while True:
         x_arr = []
@@ -134,33 +161,8 @@ async def calculate_idle(t, handler):
             handler.set_light_data(newColor)
             await asyncio.sleep(.2)
             t -= .2
+        t = orig_time
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
-        is_connected = handler.get_connection()
-        print("Handler connection in lights:", handler.get_connection())
-        if is_idle and STATE == "NOT IDLE" and is_connected:
-            STATE = "IDLE"
-            curr_color = handler.get_light_data()
-            print("Sending color", curr_color)
-            t = orig_time
-            await asyncio.sleep(1)
-        elif is_idle and is_connected:
-            # Check for data
-            STATE = "IDLE"
-            print("Pretending to send for now")
-            curr_color = handler.get_light_data()
-            handler.create_message("Input", curr_color)
-            message = handler.get_message()
-            await handler.send_message(message)
-            print("Message sent from idle")
-            t = orig_time
-            await asyncio.sleep(1)
-        elif is_idle and not is_connected:
-            print("Idle and not connected")
-            await rainbow_cycle(0.001)    # rainbow cycle with 1ms delay per step
-            t = orig_time
-            await asyncio.sleep(1)
-        else:
-            STATE = "NOT IDLE"
-            t = orig_time
-            await asyncio.sleep(1)
-            print("Is not idle")
+        await handle_lamp_state(is_idle, handler)
+        
+        
