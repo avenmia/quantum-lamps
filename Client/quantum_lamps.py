@@ -125,7 +125,7 @@ async def main():
     handler = MessageHandler()
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
-    start_light = asyncio.create_task(lights.calculate_idle(3, handler))
+    start_light = asyncio.create_task(lights.calculate_idle(3, handler, True))
     await asyncio.gather(init_connection(message, handler), start_light)
 
 asyncio.run(main())

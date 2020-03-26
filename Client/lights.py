@@ -112,7 +112,8 @@ async def set_lamp_light(color1, handler):
     # TODO: Keep lamp the same color until not idle
     while STATE != "NOT IDLE":
         print("Waiting for it to not be idle")
-        await calculate_idle(3, handler)
+        await calculate_idle(3, handler, False)
+        print("Exiting program")
     await asyncio.sleep(3)
 
 
@@ -167,9 +168,11 @@ async def change_current_light(t, handler):
     return [x_arr, y_arr, z_arr]
 
 
-async def calculate_idle(t, handler):
+async def calculate_idle(t, handler, changeColor):
     orig_time = t
-    while True:
+    # while True:
+    is_idle = True
+    if changeColor:
         [x_arr, y_arr, z_arr] = await change_current_light(orig_time, handler)
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
-        await handle_lamp_state(is_idle, handler)
+    await handle_lamp_state(is_idle, handler)
