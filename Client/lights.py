@@ -105,10 +105,14 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
-async def set_lamp_light(color1):
+async def set_lamp_light(color1, handler):
+    global STATE
     strip.fill(color1)
     strip.show()
     # TODO: Keep lamp the same color until not idle
+    while STATE != "NOT IDLE":
+        print("Waiting for it to not be idle")
+        await calculate_idle(3, handler)
     await asyncio.sleep(3)
 
 async def handle_lamp_state(is_idle, handler):
@@ -139,29 +143,31 @@ async def handle_lamp_state(is_idle, handler):
         await asyncio.sleep(1)
         print("Is not idle")
 
+async def change_current_light(t, handler):
+    global prevColor
+    x_arr = []
+    y_arr = []
+    z_arr = []
+    while t >= 0:
+        x, y, z = lis3dh.acceleration
+        print("Current colors")
+        print(accel_to_color(x, y, z))
+        x_arr.append(x)
+        y_arr.append(y)
+        z_arr.append(z)
+        newColor = accel_to_color(x, y, z)
+        # remember prev color
+        await do_fade(prevColor, newColor)
+        prevColor = newColor
+        handler.set_light_data(newColor)
+        await asyncio.sleep(.2)
+        t -= .2
+    return [x_arr, y_arr, z_arr]
 
 async def calculate_idle(t, handler):
     orig_time = t
-    global prevColor
     while True:
-        x_arr = []
-        y_arr = []
-        z_arr = []
-        while t >= 0:
-            x, y, z = lis3dh.acceleration
-            print("Current colors")
-            print(accel_to_color(x, y, z))
-            x_arr.append(x)
-            y_arr.append(y)
-            z_arr.append(z)
-            newColor = accel_to_color(x, y, z)
-            # remember prev color
-            await do_fade(prevColor, newColor)
-            prevColor = newColor
-            handler.set_light_data(newColor)
-            await asyncio.sleep(.2)
-            t -= .2
-        t = orig_time
+        [x_arr, y_arr, z_arr] = await change_current_light(orig_time, handler)
         is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
         await handle_lamp_state(is_idle, handler)
         

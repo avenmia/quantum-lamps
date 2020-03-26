@@ -32,7 +32,7 @@ class Message:
         self.payload = payload
 
 
-async def parseMessage(ws, message):
+async def parseMessage(ws, message, handler):
     send_message = ""
     rec_message = Message(message['type'], message['payload'])
     print(rec_message.message_type)
@@ -40,12 +40,12 @@ async def parseMessage(ws, message):
     if rec_message.message_type == MessageType.Username.name:
         send_message = HandleUsername(rec_message.payload)
     elif rec_message.message_type == MessageType.Input.name:
-        send_message = await HandleInput(rec_message.payload)
+        send_message = await HandleInput(rec_message.payload, handler)
     elif rec_message.message_type == MessageType.Closing.name:
         send_message = HandleClosing()
     elif rec_message.message_type == MessageType.Close.name:
         HandleClose()
-    await sendMessage(ws, send_message, True)
+    await sendMessage(ws, send_message, True, handler)
 
 
 def HandleUsername(payload):
@@ -56,9 +56,9 @@ def HandleUsername(payload):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-async def HandleInput(payload):
+async def HandleInput(payload, handler):
     data = clean_incoming_data(payload)
-    await lights.set_lamp_light(data)
+    await lights.set_lamp_light(data, handler)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
@@ -79,11 +79,11 @@ def HandleClose():
     print("Close connection")
 
 
-async def sendMessage(ws, message, recieve):
+async def sendMessage(ws, message, recieve, handler):
     await ws.send(message)
     if recieve:
         server_message = json.loads(await ws.recv())
-        message = await parseMessage(ws, server_message)
+        message = await parseMessage(ws, server_message, handler)
 
 
 async def handleMessages(ws, message, handler):
@@ -91,7 +91,7 @@ async def handleMessages(ws, message, handler):
         async for message in ws:
             print(message)
             server_message = json.loads(message)
-            await parseMessage(ws, server_message)
+            await parseMessage(ws, server_message, handler)
     except websockets.exceptions.ConnectionClosed:
         pass
 
