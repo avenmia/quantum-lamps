@@ -1,0 +1,48 @@
+import json
+
+
+class MessageHandler:
+
+    def __init__(self):
+        self.message = None
+        self.current_state = None
+        self.light_data = None
+        self.websocket = None
+        self.is_connected = False
+
+    def get_websocket(self):
+        return self.websocket
+
+    def set_websocket(self, ws):
+        self.websocket = ws
+
+    def get_connection(self):
+        return self.is_connected
+
+    def set_connection(self, is_connected):
+        self.is_connected = is_connected
+
+    def set_message(self, message):
+        self.message = message
+
+    def get_message(self):
+        return self.message
+
+    def set_current_state(self, state):
+        self.current_state = state
+
+    def get_current_state(self):
+        return self.current_state
+
+    def set_light_data(self, data):
+        self.light_data = data
+
+    def get_light_data(self):
+        return self.light_data
+
+    def create_message(self, message_type, message_data):
+        message = json.dumps({'type': message_type, 'payload': message_data})
+        self.set_message(message)
+
+    async def send_message(self, message):
+        await self.websocket.send(message)
