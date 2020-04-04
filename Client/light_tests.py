@@ -15,6 +15,13 @@ class TestLightMethods(unittest.TestCase):
         self.assertEqual("NOTIDLE", lights.get_lamp_state(False, handler))
         handler.set_connection(False)
         self.assertEqual("IDLENotConnected", lights.get_lamp_state(True, handler))
+    
+    def test_set_light(self):
+        handler = MessageHandler()
+        [x, y, z] = lights.accel_to_color(255,0,0)
+        handler.set_light_data([int(x), int(y), int(z)])
+        lights.set_light(handler)
+        
 
 
 if __name__ == '__main__':

@@ -144,9 +144,14 @@ async def change_current_light(t, change_color, handler):
 # Function to keep light the same color
 # until interrupted by message
 # or by moving the lamp
-async def keep_light():
+async def keep_light(handler):
     # While True:
+    set_light(handler)
     await asyncio.sleep(1)
+
+def set_light(handler):
+    strip.fill(handler.get_light_data())
+    strip.show()
 
 
 async def handle_current_lamp_state(lamp_state, input_message, handler):
@@ -164,7 +169,7 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
             await asyncio.sleep(1)
 
         # Set the current state of the light
-        keep_light()
+        keep_light(handler)
     elif lamp_state == "IDLE":
         print("Lamp is idle")
     elif lamp_state == "IDLENotConnected":
