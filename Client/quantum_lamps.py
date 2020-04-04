@@ -63,7 +63,7 @@ async def HandleInput(payload, handler):
         data = clean_incoming_data(payload)
         print("Here is incoming light data", data)
         handler.set_light_data(data)
-        #await lights.set_lamp_light(data, handler)
+        # await lights.set_lamp_light(data, handler)
         await lights.handle_current_lamp_state("SetLight", True, handler)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
