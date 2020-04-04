@@ -176,7 +176,6 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
 # TODO: Change return to enum
 def get_lamp_state(is_idle, handler):
     global STATE
-    print("State is:", STATE)
     is_connected = handler.get_connection()
     if is_idle and STATE == "NOT IDLE" and is_connected:
         STATE = "IDLE"
