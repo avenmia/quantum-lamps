@@ -57,8 +57,14 @@ def HandleUsername(payload):
 
 
 async def HandleInput(payload, handler):
-    data = clean_incoming_data(payload)
-    await lights.set_lamp_light(data, handler)
+    lock = asyncio.Lock()
+    async with lock:
+        print("In locked state")
+        data = clean_incoming_data(payload)
+        print("Here is incoming light data", data)
+        handler.set_light_data(data)
+        #await lights.set_lamp_light(data, handler)
+        await lights.handle_current_lamp_state("SetLight", True, handler)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
@@ -100,6 +106,7 @@ async def init_connection(message, handler):
     print("Initial message:", message)
     global CLIENT_WS
     uri = WS_URI
+    print("URI is:", uri)
     async with websockets.connect(uri) as websocket:
         print("Setting Connection open to true")
 
@@ -125,7 +132,8 @@ async def main():
     handler = MessageHandler()
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
-    start_light = asyncio.create_task(lights.calculate_idle(3, handler, True))
+    start_light = asyncio.create_task(lights.read_light_data(handler))
     await asyncio.gather(init_connection(message, handler), start_light)
+
 
 asyncio.run(main())
