@@ -4,6 +4,7 @@ import os
 import asyncio
 import websockets
 import json
+from message_handler import MessageHandler
 from enum import Enum
 import lights
 
@@ -31,7 +32,7 @@ class Message:
         self.payload = payload
 
 
-async def parseMessage(ws, message):
+async def parseMessage(ws, message, handler):
     send_message = ""
     rec_message = Message(message['type'], message['payload'])
     print(rec_message.message_type)
@@ -39,12 +40,12 @@ async def parseMessage(ws, message):
     if rec_message.message_type == MessageType.Username.name:
         send_message = HandleUsername(rec_message.payload)
     elif rec_message.message_type == MessageType.Input.name:
-        send_message = HandleInput(rec_message.payload)
+        send_message = await HandleInput(rec_message.payload, handler)
     elif rec_message.message_type == MessageType.Closing.name:
         send_message = HandleClosing()
     elif rec_message.message_type == MessageType.Close.name:
         HandleClose()
-    await sendMessage(ws, send_message, True)
+    await sendMessage(ws, send_message, True, handler)
 
 
 def HandleUsername(payload):
@@ -55,15 +56,25 @@ def HandleUsername(payload):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-def HandleInput(payload):
-    print("Received input")
+async def HandleInput(payload, handler):
+    lock = asyncio.Lock()
+    async with lock:
+        print("In locked state")
+        data = clean_incoming_data(payload)
+        print("Here is incoming light data", data)
+        handler.set_light_data(data)
+        # await lights.set_lamp_light(data, handler)
+        await lights.handle_current_lamp_state("SetLight", True, handler)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
+def clean_incoming_data(payload):
+    return tuple(payload)
+
+
 def HandleClosing():
     global USERNAME
-    lights.CONNECTION_OPEN = False
     print("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
@@ -72,42 +83,44 @@ def HandleClosing():
 def HandleClose():
     # Shouldn't get hit
     print("Close connection")
-    lights.CONNECTION_OPEN = False
 
 
-async def sendMessage(ws, message, recieve):
+async def sendMessage(ws, message, recieve, handler):
     await ws.send(message)
     if recieve:
         server_message = json.loads(await ws.recv())
-        message = await parseMessage(ws, server_message)
+        message = await parseMessage(ws, server_message, handler)
 
 
-async def handleMessages(ws, message):
+async def handleMessages(ws, message, handler):
     try:
         async for message in ws:
             print(message)
             server_message = json.loads(message)
-            await parseMessage(ws, server_message)
+            await parseMessage(ws, server_message, handler)
     except websockets.exceptions.ConnectionClosed:
         pass
 
 
-async def init_connection(message):
+async def init_connection(message, handler):
     print("Initial message:", message)
     global CLIENT_WS
     uri = WS_URI
+    print("URI is:", uri)
     async with websockets.connect(uri) as websocket:
         print("Setting Connection open to true")
-        lights.CONNECTION_OPEN = True
+
+        handler.set_connection(True)
+        handler.set_websocket(websocket)
+        is_connected = handler.get_connection()
+        print("handler connection:", is_connected)
         CLIENT_WS = websocket
         # send init message
         print("Sending message")
         await websocket.send(message)
         print("Connection is open")
-        print("Printing init_connection address",
-              hex(id(lights.CONNECTION_OPEN)))
-        while lights.CONNECTION_OPEN:
-            await handleMessages(websocket, message)
+        while is_connected:
+            await handleMessages(websocket, message, handler)
             # if GPIO.input(15) == GPIO.LOW:
             #         print("Button was pushed")
         await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
@@ -116,9 +129,11 @@ async def init_connection(message):
 
 
 async def main():
+    handler = MessageHandler()
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
-    start_light = asyncio.create_task(lights.calculate_idle(3))
-    await asyncio.gather(init_connection(message), start_light)
+    start_light = asyncio.create_task(lights.read_light_data(handler))
+    await asyncio.gather(init_connection(message, handler), start_light)
+
 
 asyncio.run(main())

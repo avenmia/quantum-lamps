@@ -12,7 +12,6 @@ LED_COUNT = 16  # Number of LED pixels.
 LED_PIN = board.D18  # GPIO pin
 LED_BRIGHTNESS = .1  # LED brightness
 LED_ORDER = neopixel.RGBW  # order of LED colors. May also be RGB, GRBW, or RGBW
-CONNECTION_OPEN = False
 
 USERNAME = ""
 STATE = "IDLE"
@@ -106,50 +105,105 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
-async def calculate_idle(t):
-    orig_time = t
+async def set_lamp_light(color1, handler):
     global STATE
-    global prevColor
-    global CONNECTION_OPEN
-    while True:
-        x_arr = []
-        y_arr = []
-        z_arr = []
-        while t >= 0:
-            x, y, z = lis3dh.acceleration
-            print("Current colors")
-            print(accel_to_color(x, y, z))
-            x_arr.append(x)
-            y_arr.append(y)
-            z_arr.append(z)
-            newColor = accel_to_color(x, y, z)
-            # remember prev color
-            await do_fade(prevColor, newColor)
-            prevColor = newColor
-            await asyncio.sleep(.2)
-            t -= .2
-        is_idle = is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
+    strip.fill(color1)
+    strip.show()
+    # TODO: Keep lamp the same color until not idle
+    while STATE != "NOT IDLE":
+        print("Waiting for it to not be idle")
+        await calculate_idle(3, handler, False)
+        print("Exiting program")
+    await asyncio.sleep(3)
 
-        print("Connection global:", CONNECTION_OPEN)
-        print("Printing light address", hex(id(CONNECTION_OPEN)))
-        if is_idle and STATE == "NOT IDLE" and CONNECTION_OPEN:
-            STATE = "IDLE"
-            print("Sending color")
-            t = orig_time
+
+async def change_current_light(t, change_color, handler):
+    global prevColor
+    x_arr = []
+    y_arr = []
+    z_arr = []
+    while t >= 0:
+        x, y, z = lis3dh.acceleration
+        print("Current colors")
+        print(accel_to_color(x, y, z))
+        x_arr.append(x)
+        y_arr.append(y)
+        z_arr.append(z)
+        newColor = accel_to_color(x, y, z)
+        # remember prev color
+        await do_fade(prevColor, newColor)
+        prevColor = newColor
+        if change_color:
+            print("Not keep light")
+            handler.set_light_data(newColor)
+        await asyncio.sleep(.2)
+        t -= .2
+    return [x_arr, y_arr, z_arr]
+
+
+# Function to keep light the same color
+# until interrupted by message
+# or by moving the lamp
+async def keep_light():
+    # While True:
+    await asyncio.sleep(1)
+
+
+async def handle_current_lamp_state(lamp_state, input_message, handler):
+    if lamp_state == "SetLight":
+        # If the request did not come from the server
+        # Send data to server
+        if not input_message:
+            print("Non input message")
+            # Send Message
+            curr_color = handler.get_light_data()
+            handler.create_message("Input", curr_color)
+            message = handler.get_message()
+            await handler.send_message(message)
+            print("Message sent server")
             await asyncio.sleep(1)
-        elif is_idle and CONNECTION_OPEN:
-            # Check for data
-            STATE = "IDLE"
-            print("Receiving data")
-            t = orig_time
-            await asyncio.sleep(1)
-        elif is_idle and not CONNECTION_OPEN:
-            print("Idle and not connected")
-            await rainbow_cycle(0.001)    # rainbow cycle with 1ms delay per step
-            t = orig_time
-            await asyncio.sleep(1)
-        else:
-            STATE = "NOT IDLE"
-            t = orig_time
-            await asyncio.sleep(1)
-            print("Is not idle")
+
+        # Set the current state of the light
+        keep_light()
+    elif lamp_state == "IDLE":
+        print("Lamp is idle")
+    elif lamp_state == "IDLENotConnected":
+        print("Idle and not connected")
+    else:
+        print("Not Idle")
+
+
+# TODO: Change return to enum
+def get_lamp_state(is_idle, handler):
+    global STATE
+    is_connected = handler.get_connection()
+    if is_idle and STATE == "NOT IDLE" and is_connected:
+        STATE = "IDLE"
+        # Change to ENUM
+        return "SetLight"
+    elif is_idle and is_connected:
+        # Check for data
+        STATE = "IDLE"
+        return "IDLE"
+    elif is_idle and not is_connected:
+        return "IDLENotConnected"
+    else:
+        STATE = "NOT IDLE"
+        return "NOTIDLE"
+
+
+async def read_light_data(handler):
+    while True:
+        # Get lamp data
+        is_idle = await calculate_idle(3, handler, True)
+        print("Is Idle:", is_idle)
+        lamp_state = get_lamp_state(is_idle, handler)
+        print("Lamp state is", lamp_state)
+        await handle_current_lamp_state(lamp_state, False, handler)
+
+
+# Returns true or false whether the lamp is idle
+async def calculate_idle(t, handler, change_color):
+    orig_time = t
+    [x_arr, y_arr, z_arr] = await change_current_light(orig_time, change_color, handler)
+    return is_lamp_idle(np.std(x_arr), np.std(y_arr), np.std(z_arr))
