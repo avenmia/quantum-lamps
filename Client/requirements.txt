@@ -5,3 +5,4 @@ RPi.GPIO
 websockets
 python-dotenv
 contextvars
+unittest
