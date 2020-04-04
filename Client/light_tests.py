@@ -2,6 +2,7 @@ import unittest
 import lights
 from message_handler import MessageHandler
 
+
 class TestLightMethods(unittest.TestCase):
 
     def test_get_lamp_state(self):
@@ -15,8 +16,6 @@ class TestLightMethods(unittest.TestCase):
         handler.set_connection(False)
         self.assertEqual("IDLENotConnected", lights.get_lamp_state(True, handler))
 
-    
 
 if __name__ == '__main__':
     unittest.main()
-
