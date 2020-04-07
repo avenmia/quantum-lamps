@@ -9,6 +9,7 @@ class MessageHandler:
         self.light_data = None
         self.websocket = None
         self.is_connected = False
+        self.new_message = False
 
     def get_websocket(self):
         return self.websocket
@@ -39,6 +40,12 @@ class MessageHandler:
 
     def get_light_data(self):
         return self.light_data
+
+    def get_new_message(self):
+        return self.new_message
+
+    def set_new_message(self, data):
+        self.new_message = data
 
     def create_message(self, message_type, message_data):
         message = json.dumps({'type': message_type, 'payload': message_data})

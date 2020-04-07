@@ -130,11 +130,10 @@ async def change_current_light(t, change_color, handler):
         y_arr.append(y)
         z_arr.append(z)
         newColor = accel_to_color(x, y, z)
-        # remember prev color
-        await do_fade(prevColor, newColor)
-        prevColor = newColor
         if change_color:
-            print("Not keep light")
+            # remember prev color
+            await do_fade(prevColor, newColor)
+            prevColor = newColor
             handler.set_light_data(newColor)
         await asyncio.sleep(.2)
         t -= .2
@@ -145,9 +144,17 @@ async def change_current_light(t, change_color, handler):
 # until interrupted by message
 # or by moving the lamp
 async def keep_light(handler):
-    # While True:
     set_light(handler)
+    while True:
+        is_idle = await calculate_idle(1, handler, False)
+        new_message = handler.get_new_message()
+        # If not idle or incoming message
+        if not is_idle or new_message:
+            print("New Message")
+            handler.set_new_message(False)
+            break
     await asyncio.sleep(1)
+    return "Finished"
 
 def set_light(handler):
     strip.fill(handler.get_light_data())
