@@ -42,6 +42,9 @@ class TestLightMethods(unittest.TestCase):
         self.assertEqual("Finished", result)
         self.assertEqual([255,255,0], handler.get_light_data())
 
+    def test_accel_to_color(self):
+        self.assertEqual(lights.accel_to_color(0,0,0), (255,255,255))
+        self.assertEqual(lights.accel_to_color(255,255,255), (1,1,1))
         
 
 

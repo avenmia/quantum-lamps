@@ -5,6 +5,7 @@ import board
 import neopixel
 import numpy as np
 import asyncio
+import math
 import RPi.GPIO as GPIO
 
 # LED strip configuration:
@@ -36,7 +37,7 @@ lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=int1)
 
 
 def accel_to_color(x, y, z):
-    return (255/(abs(x)+1), 255/(abs(y) + 1), 255/(abs(z) + 1))
+    return (math.ceil(255/(abs(x)+1)), math.ceil(255/(abs(y) + 1)), math.ceil(255/(abs(z) + 1)))
 
 
 def fade(color1, color2, percent):
