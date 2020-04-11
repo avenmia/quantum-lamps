@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import asyncio
 import websockets
 import json
 from message_handler import MessageHandler
 from enum import Enum
 import lights
+import traceback
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -57,21 +59,45 @@ def HandleUsername(payload):
 
 
 async def HandleInput(payload, handler):
-    lock = asyncio.Lock()
+    lock = lights.lock
+    lights.event.set()
     async with lock:
         print("In locked state")
         data = clean_incoming_data(payload)
         print("Here is incoming light data", data)
+        print("Clearing the lock")
+        lights.event.clear()
         handler.set_light_data(data)
-        handler.set_new_message(True)
-        # await lights.set_lamp_light(data, handler)
-        await lights.handle_current_lamp_state("SetLight", True, handler)
+        print(f'Before tasks handler is: {handler.get_light_data()}')
+        print(f'Before incoming data is: {data}')
+        for thing in asyncio.all_tasks():
+            if thing.get_name() == "maintain_light":
+                thing.cancel()
+
+        maintain_light = lights.loop.create_task(lights.input_light(handler, data))
+        maintain_light.set_name("maintain_light")
+        try:
+            #await asyncio.run_coroutine_threadsafe(maintain_light,lights.loop)
+            lights.loop.call_soon_threadsafe(asyncio.ensure_future, maintain_light)
+        except TypeError as err:
+            traceback.print_exc()
+            print(f'TypeError is: {err}')
+        except:
+            traceback.print_exc()
+            print(f'Error is:',sys.exc_info()[0])
+        #lights.loop.run_until_complete(maintain_light)
+        #await lights.keep_light(handler)
+        #await lights.handle_current_lamp_state("SetLight", True, handler)
+    print("Releasing lock")
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
 def clean_incoming_data(payload):
-    return tuple(payload)
+    print("Cleaning data:", tuple(payload))
+    [x,y,z] = tuple(payload)
+    print("x, y, z", [x,y,z])
+    return [int(x), int(y), int(z)]
 
 
 def HandleClosing():
@@ -89,14 +115,18 @@ def HandleClose():
 async def sendMessage(ws, message, recieve, handler):
     await ws.send(message)
     if recieve:
+        print("Message received")
         server_message = json.loads(await ws.recv())
         message = await parseMessage(ws, server_message, handler)
 
 
 async def handleMessages(ws, message, handler):
+    print("Handling directly")
     try:
         async for message in ws:
             print(message)
+            print("handling that message")
+            handler.set_new_message(True)
             server_message = json.loads(message)
             await parseMessage(ws, server_message, handler)
     except websockets.exceptions.ConnectionClosed:
@@ -121,6 +151,7 @@ async def init_connection(message, handler):
         await websocket.send(message)
         print("Connection is open")
         while is_connected:
+            print("Still connected")
             await handleMessages(websocket, message, handler)
             # if GPIO.input(15) == GPIO.LOW:
             #         print("Button was pushed")
@@ -134,7 +165,14 @@ async def main():
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
     start_light = asyncio.create_task(lights.read_light_data(handler))
+    start_light.set_name("start light")
+    print("Clearing event")
+    
+    # Event set clears lock
+    lights.event.set()
+    print("Event cleared")
     await asyncio.gather(init_connection(message, handler), start_light)
 
 
-asyncio.run(main())
+# asyncio.run(main())
+lights.loop.run_until_complete(main())

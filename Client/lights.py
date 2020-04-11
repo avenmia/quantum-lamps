@@ -35,6 +35,9 @@ int1 = digitalio.DigitalInOut(board.D6)  # Set this to the correct pin for the i
 lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=int1)
 # Create a way to fade/transition between colors using numpy arrays
 
+lock = asyncio.Lock()
+loop = asyncio.new_event_loop()
+event = asyncio.Event(loop=loop)
 
 def accel_to_color(x, y, z):
     return (math.ceil(255/(abs(x)+1)), math.ceil(255/(abs(y) + 1)), math.ceil(255/(abs(z) + 1)))
@@ -80,12 +83,14 @@ async def rollcall_cycle(wait):
             else:
                 color2 = gokai_colors[(j+1)]
             percent = i*0.1   # 0.1*100 so 10% increments between colors
+            print("Setting light in rollcall")
             strip.fill((fade(color1, color2, percent)))
             strip.show()
             await asyncio.sleep(wait)
 
 
 async def do_fade(color1, color2):
+    print(f'fading from {color1} to {color2}')
     for i in range(10):
         percent = i*0.1   # 0.1*100 so 10% increments between colors
         strip.fill((fade(color1, color2, percent)))
@@ -125,17 +130,22 @@ async def change_current_light(t, change_color, handler):
     z_arr = []
     while t >= 0:
         x, y, z = lis3dh.acceleration
-        print("Current colors")
-        print(accel_to_color(x, y, z))
+        # print("Current colors")
+        # print(accel_to_color(x, y, z))
         x_arr.append(x)
         y_arr.append(y)
         z_arr.append(z)
         newColor = accel_to_color(x, y, z)
+        # TODO: HACK
         if change_color:
+            print("Waiting for event")
+            await event.wait()
+            print("Done waiting")
             # remember prev color
+            print("Changing color")
+            handler.set_light_data(newColor)
             await do_fade(prevColor, newColor)
             prevColor = newColor
-            handler.set_light_data(newColor)
         await asyncio.sleep(.2)
         t -= .2
     return [x_arr, y_arr, z_arr]
@@ -145,19 +155,49 @@ async def change_current_light(t, change_color, handler):
 # until interrupted by message
 # or by moving the lamp
 async def keep_light(handler):
+    print(f'Setting light in keep light to: {handler.get_light_data()}')
     set_light(handler)
+    handler.set_new_message(False)
     while True:
         is_idle = await calculate_idle(1, handler, False)
+        set_light(handler)
         new_message = handler.get_new_message()
         # If not idle or incoming message
+        print("Is Idle:", is_idle)
+        print("New Message", new_message)
+        print(f'Current light in keep light to: {handler.get_light_data()}')
         if not is_idle or new_message:
-            print("New Message")
+            print("Breaking freeeeee")
             handler.set_new_message(False)
             break
     await asyncio.sleep(1)
     return "Finished"
 
+async def input_light(handler, data):
+    if handler.get_light_data() != data:
+        handler.set_light_data(data)
+    print(f'But data is: {data}')
+    print(f'Setting light in keep light to: {handler.get_light_data()}')
+    set_light(handler)
+    handler.set_new_message(False)
+    while True:
+        is_idle = await calculate_idle(1, handler, False)
+        set_light(handler)
+        new_message = handler.get_new_message()
+        # If not idle or incoming message
+        print("Is Idle:", is_idle)
+        print("New Message", new_message)
+        print(f'Current light in keep light to: {handler.get_light_data()}')
+        if not is_idle or new_message:
+            print("Breaking freeeeee")
+            handler.set_new_message(False)
+            break
+    await asyncio.sleep(1)
+    return "Finished"
+
+
 def set_light(handler):
+    print(f'setting light to {handler.get_light_data()}')
     strip.fill(handler.get_light_data())
     strip.show()
 
@@ -175,14 +215,16 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
             await handler.send_message(message)
             print("Message sent server")
             await asyncio.sleep(1)
-
+        else:
+            print("Input message")
         # Set the current state of the light
-        keep_light(handler)
+        await keep_light(handler)
     elif lamp_state == "IDLE":
         print("Lamp is idle")
     elif lamp_state == "IDLENotConnected":
         print("Idle and not connected")
     else:
+        event.clear()
         print("Not Idle")
 
 
