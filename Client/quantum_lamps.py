@@ -42,7 +42,9 @@ async def parseMessage(ws, message, handler):
     if rec_message.message_type == MessageType.Username.name:
         send_message = HandleUsername(rec_message.payload)
     elif rec_message.message_type == MessageType.Input.name:
-        send_message = await HandleInput(rec_message.payload, handler)
+        await HandleInput(rec_message.payload, handler)
+        print("Returning from parse message")
+        return
     elif rec_message.message_type == MessageType.Closing.name:
         send_message = HandleClosing()
     elif rec_message.message_type == MessageType.Close.name:
@@ -70,24 +72,37 @@ async def HandleInput(payload, handler):
         handler.set_light_data(data)
         print(f'Before tasks handler is: {handler.get_light_data()}')
         print(f'Before incoming data is: {data}')
-        for thing in asyncio.all_tasks():
-            if thing.get_name() == "maintain_light":
-                thing.cancel()
+        for task in asyncio.all_tasks():
+            if task.get_name() == "maintain_light":
+                task.cancel()
 
-        maintain_light = lights.loop.create_task(lights.input_light(handler, data))
-        maintain_light.set_name("maintain_light")
+        #This approach creates a new task and returns to the websocket executor?
+        # 1 Doesn't work returns to the websocket task and gets blocked waiting for incoming signal
+        # maintain_light = lights.loop.create_task(lights.input_light(handler, data))
+        # maintain_light.set_name("maintain_light")
+        
+        # 2
+        # maintain_light = lights.loop.create_task(lights.input_light(handler, data))
         try:
-            #await asyncio.run_coroutine_threadsafe(maintain_light,lights.loop)
-            lights.loop.call_soon_threadsafe(asyncio.ensure_future, maintain_light)
+            # 1 Doesn't work returns to the websocket task and gets blocked waiting for incoming signal
+            #lights.loop.call_soon_threadsafe(asyncio.ensure_future, maintain_light)
+            
+            # 2
+            #lights.loop.run_until_complete(maintain_light)
+           
+            # 1 
+            # Doesn't work. lights.input_light doesn't block the event loop
+            #result = await lights.loop.run_in_executor(None, lights.input_light(handler, data))
+            print(f'Result: {result} out of here')
         except TypeError as err:
             traceback.print_exc()
             print(f'TypeError is: {err}')
         except:
             traceback.print_exc()
             print(f'Error is:',sys.exc_info()[0])
-        #lights.loop.run_until_complete(maintain_light)
-        #await lights.keep_light(handler)
-        #await lights.handle_current_lamp_state("SetLight", True, handler)
+        # 3
+        await lights.input_light(handler, data)
+        
     print("Releasing lock")
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
@@ -126,7 +141,6 @@ async def handleMessages(ws, message, handler):
         async for message in ws:
             print(message)
             print("handling that message")
-            handler.set_new_message(True)
             server_message = json.loads(message)
             await parseMessage(ws, server_message, handler)
     except websockets.exceptions.ConnectionClosed:

@@ -6,6 +6,8 @@ import neopixel
 import numpy as np
 import asyncio
 import math
+import traceback
+import sys
 import RPi.GPIO as GPIO
 
 # LED strip configuration:
@@ -111,16 +113,16 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
-async def set_lamp_light(color1, handler):
-    global STATE
-    strip.fill(color1)
-    strip.show()
-    # TODO: Keep lamp the same color until not idle
-    while STATE != "NOT IDLE":
-        print("Waiting for it to not be idle")
-        await calculate_idle(3, handler, False)
-        print("Exiting program")
-    await asyncio.sleep(3)
+# async def set_lamp_light(color1, handler):
+#     global STATE
+#     strip.fill(color1)
+#     strip.show()
+#     # TODO: Keep lamp the same color until not idle
+#     while STATE != "NOT IDLE":
+#         print("Waiting for it to not be idle")
+#         await calculate_idle(3, handler, False)
+#         print("Exiting program")
+#     await asyncio.sleep(3)
 
 
 async def change_current_light(t, change_color, handler):
@@ -136,14 +138,14 @@ async def change_current_light(t, change_color, handler):
         y_arr.append(y)
         z_arr.append(z)
         newColor = accel_to_color(x, y, z)
+        print("In change current light")
+
         # TODO: HACK
         if change_color:
-            print("Waiting for event")
             await event.wait()
-            print("Done waiting")
             # remember prev color
             print("Changing color")
-            handler.set_light_data(newColor)
+            #handler.set_light_data(newColor)
             await do_fade(prevColor, newColor)
             prevColor = newColor
         await asyncio.sleep(.2)
@@ -154,50 +156,42 @@ async def change_current_light(t, change_color, handler):
 # Function to keep light the same color
 # until interrupted by message
 # or by moving the lamp
-async def keep_light(handler):
-    print(f'Setting light in keep light to: {handler.get_light_data()}')
-    set_light(handler)
-    handler.set_new_message(False)
-    while True:
-        is_idle = await calculate_idle(1, handler, False)
-        set_light(handler)
-        new_message = handler.get_new_message()
-        # If not idle or incoming message
-        print("Is Idle:", is_idle)
-        print("New Message", new_message)
-        print(f'Current light in keep light to: {handler.get_light_data()}')
-        if not is_idle or new_message:
-            print("Breaking freeeeee")
-            handler.set_new_message(False)
-            break
-    await asyncio.sleep(1)
-    return "Finished"
+# async def keep_light(handler):
+#     print(f'Setting light in keep light to: {handler.get_light_data()}')
+#     set_light(handler)
+#     while True:
+#         is_idle = await calculate_idle(1, handler, False)
+#         set_light(handler)
+#         new_message = handler.get_new_message()
+#         # If not idle or incoming message
+#         print("Is Idle:", is_idle)
+#         print("New Message", new_message)
+#         print(f'Current light in keep light to: {handler.get_light_data()}')
+#         if not is_idle or new_message:
+#             print("Breaking freeeeee")
+#             break
+#     await asyncio.sleep(1)
+#     return "Finished"
 
 async def input_light(handler, data):
     if handler.get_light_data() != data:
         handler.set_light_data(data)
-    print(f'But data is: {data}')
-    print(f'Setting light in keep light to: {handler.get_light_data()}')
     set_light(handler)
-    handler.set_new_message(False)
+    #TODO: Check this placement
+    # Is set message even necessary with locks
     while True:
         is_idle = await calculate_idle(1, handler, False)
         set_light(handler)
         new_message = handler.get_new_message()
         # If not idle or incoming message
-        print("Is Idle:", is_idle)
-        print("New Message", new_message)
-        print(f'Current light in keep light to: {handler.get_light_data()}')
         if not is_idle or new_message:
             print("Breaking freeeeee")
-            handler.set_new_message(False)
             break
-    await asyncio.sleep(1)
+    print("Outside while loop")
     return "Finished"
 
 
 def set_light(handler):
-    print(f'setting light to {handler.get_light_data()}')
     strip.fill(handler.get_light_data())
     strip.show()
 
@@ -207,18 +201,17 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
         # If the request did not come from the server
         # Send data to server
         if not input_message:
-            print("Non input message")
             # Send Message
             curr_color = handler.get_light_data()
             handler.create_message("Input", curr_color)
             message = handler.get_message()
             await handler.send_message(message)
-            print("Message sent server")
             await asyncio.sleep(1)
         else:
             print("Input message")
         # Set the current state of the light
-        await keep_light(handler)
+        #await keep_light(handler)
+        print("Finished keeping light")
     elif lamp_state == "IDLE":
         print("Lamp is idle")
     elif lamp_state == "IDLENotConnected":
