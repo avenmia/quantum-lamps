@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import asyncio
 import websockets
 import json
 from message_handler import MessageHandler
 from enum import Enum
 import lights
-import traceback
-import concurrent.futures
 import logging
 
 from dotenv import load_dotenv
@@ -70,7 +67,7 @@ async def HandleInput(payload, handler):
 
 
 def clean_incoming_data(payload):
-    [x,y,z] = tuple(payload)
+    [x, y, z] = tuple(payload)
     return [int(x), int(y), int(z)]
 
 
@@ -126,15 +123,15 @@ async def main():
     handler = MessageHandler()
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
-    
+
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
-    
+
     connect = asyncio.create_task(init_connection(message, handler))
     connect.set_name("ws connect")
 
     lights.event.set()
-    
+
     await asyncio.gather(connect, start_light)
 
 lights.loop.set_debug(True)

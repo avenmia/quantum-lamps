@@ -6,8 +6,6 @@ import neopixel
 import numpy as np
 import asyncio
 import math
-import traceback
-import sys
 import RPi.GPIO as GPIO
 
 # LED strip configuration:
@@ -40,6 +38,7 @@ lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, int1=int1)
 lock = asyncio.Lock()
 loop = asyncio.new_event_loop()
 event = asyncio.Event(loop=loop)
+
 
 def accel_to_color(x, y, z):
     return (math.ceil(255/(abs(x)+1)), math.ceil(255/(abs(y) + 1)), math.ceil(255/(abs(z) + 1)))
@@ -114,18 +113,6 @@ async def rainbow_cycle(wait):
         await asyncio.sleep(wait)
 
 
-# async def set_lamp_light(color1, handler):
-#     global STATE
-#     strip.fill(color1)
-#     strip.show()
-#     # TODO: Keep lamp the same color until not idle
-#     while STATE != "NOT IDLE":
-#         print("Waiting for it to not be idle")
-#         await calculate_idle(3, handler, False)
-#         print("Exiting program")
-#     await asyncio.sleep(3)
-
-
 async def change_current_light(t, change_color, handler):
     global prevColor
     x_arr = []
@@ -174,6 +161,7 @@ async def keep_light(handler, data):
     await asyncio.sleep(1)
     return "Finished"
 
+
 def set_light(handler):
     strip.fill(handler.get_light_data())
     strip.show()
@@ -187,9 +175,7 @@ async def monitor_idle(handler, data):
         is_idle = await calculate_idle(1, handler, False)
         print(f'Is idle:', is_idle)
         set_light(handler)
-    current_tasks = asyncio.all_tasks()
     event.set()
-
 
 
 async def maintain_light(handler, data):
