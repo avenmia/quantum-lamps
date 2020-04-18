@@ -6,6 +6,7 @@ import neopixel
 import numpy as np
 import asyncio
 import math
+from lamp_states import LampState
 import RPi.GPIO as GPIO
 
 # LED strip configuration:
@@ -97,7 +98,6 @@ async def do_fade(color1, color2, handler):
         strip.fill((fade(color1, color2, percent)))
         strip.show()
         await asyncio.sleep(0.1)
-    handler.set_light_data(color2)
 
 
 def is_lamp_idle(sx, sy, sz):
@@ -120,19 +120,17 @@ async def change_current_light(t, change_color, handler):
     z_arr = []
     while t >= 0:
         x, y, z = lis3dh.acceleration
-        # print("Current colors")
-        # print(accel_to_color(x, y, z))
         x_arr.append(x)
         y_arr.append(y)
         z_arr.append(z)
         newColor = accel_to_color(x, y, z)
-        print("In change current light")
-
         if change_color:
             await event.wait()
             # remember prev color
             print("Changing color")
             await do_fade(prevColor, newColor, handler)
+            handler.set_light_data(newColor)
+            print("Changed color")
             prevColor = newColor
         await asyncio.sleep(.2)
         t -= .2
@@ -170,22 +168,25 @@ def set_light(handler):
 async def monitor_idle(handler, data):
     is_idle = True
     if handler.get_light_data() != data:
+        print(f'Setting light data back: {data}')
         handler.set_light_data(data)
     while is_idle:
         is_idle = await calculate_idle(1, handler, False)
         print(f'Is idle:', is_idle)
+        handler.set_light_data(data)
         set_light(handler)
     event.set()
 
 
 async def maintain_light(handler, data):
+    print("Maintain light data:", data)
     mon_idle = loop.create_task(monitor_idle(handler, data))
     mon_idle.set_name("monitor_idle")
     loop.call_soon_threadsafe(asyncio.ensure_future, mon_idle)
 
 
 async def handle_current_lamp_state(lamp_state, input_message, handler):
-    if lamp_state == "SetLight":
+    if lamp_state == LampState.SETLIGHT:
         # If the request did not come from the server
         # Send data to server
         if not input_message:
@@ -198,36 +199,40 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
             print(f'Message is: {message}')
             await handler.send_message(message)
             async with lock:
+                mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
+                if len(mon_task) > 0:
+                    print("Canceling previous mon task")
+                    mon_task[0].cancel()
                 await maintain_light(handler, curr_color)
             print("Releasing lock in current lamp")
         else:
             print("Input message")
-    elif lamp_state == "IDLE":
+    elif lamp_state == LampState.IDLE:
         print("Lamp is idle")
-    elif lamp_state == "IDLENotConnected":
+    elif lamp_state == LampState.IDLENOTCONNECT:
         print("Idle and not connected")
     else:
         event.set()
         print("Not Idle")
 
 
-# TODO: Change return to enum
 def get_lamp_state(is_idle, handler):
     global STATE
     is_connected = handler.get_connection()
     if is_idle and STATE == "NOT IDLE" and is_connected:
         STATE = "IDLE"
         # Change to ENUM
-        return "SetLight"
+        return LampState.SETLIGHT
     elif is_idle and is_connected:
         # Check for data
         STATE = "IDLE"
-        return "IDLE"
+        return LampState.IDLE
     elif is_idle and not is_connected:
-        return "IDLENotConnected"
+        STATE = "IDLE not connected"
+        return LampState.IDLENOTCONNECT
     else:
         STATE = "NOT IDLE"
-        return "NOTIDLE"
+        return LampState.NOTIDLE
 
 
 async def read_light_data(handler):

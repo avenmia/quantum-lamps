@@ -58,9 +58,13 @@ def HandleUsername(payload):
 
 async def HandleInput(payload, handler):
     lock = lights.lock
+    print("Clearing event")
     lights.event.clear()
     async with lock:
         data = clean_incoming_data(payload)
+        mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
+        if len(mon_task) > 0:
+            mon_task[0].cancel()
         await lights.maintain_light(handler, data)
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
