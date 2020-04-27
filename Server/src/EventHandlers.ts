@@ -1,6 +1,7 @@
 import SharedSecret from "./Secret";
 import { Client } from "./Clients";
 import { MessageType } from "./MessageType";
+import { catService, catWSMessages, catState } from "./LogConfig"
 
 let num = 0;
 
@@ -15,10 +16,10 @@ export function onAuthentication(payload: any, ws: any, people: Client[]) {
   if (SharedSecret === payload.secret) {
     //TODO: Change this num
     num = num++;
-    console.log("Secret matches");
+    catWSMessages.debug("Secret matches. Adding new client.");
     const client = new Client(payload.username, ws);
     people.push(client);
-    people.forEach(p => console.log(`person name ${p.username}`));
+    people.forEach(p => catState.debug(`person name ${p.username}`));
     ws.send(ClientResponse(MessageType.Username, client.username));
     return people;
   } else {
@@ -28,31 +29,27 @@ export function onAuthentication(payload: any, ws: any, people: Client[]) {
   }
 }
 
-export function onInput(payload: any, people: Client[]) {
-  console.log("Input received");
+export function onInput(payload: any, ws: any, people: Client[]) {
+  catWSMessages.debug("Input received");
   if (payload !== 0 && typeof payload !== "undefined") {
-    console.log("Sending message");
+    catWSMessages.debug("Sending message");
     const replacer = (key: any, value: any) =>
       typeof value === "undefined" ? "0" : value;
     const message = JSON.stringify(
       { type: "Input", payload: payload },
       replacer
     );
-    people.forEach(p => p.client.send(message));
+    // TODO: Finish this
+    people.filter(p => p.client != ws).forEach(p => p.client.send(message));
   }
 }
 
 export function onListening(payload: any, people: Client[]) {
-  console.log("Client is listening");
-  setTimeout(() => {
-    people.forEach(p =>
-      p.client.send(JSON.stringify({ type: "Input", payload: "4" }))
-    );
-  }, 5000);
+  catWSMessages.debug("Client is listening");
 }
 
 export function onClose(payload: any, people: Client[]) {
   // Find person and remove them
-  console.log(payload, people);
-  console.log("Closing connection");
+  catState.debug("Removing user");
+  catState.debug("Closing connection");
 }
