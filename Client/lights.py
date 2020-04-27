@@ -12,7 +12,7 @@ import RPi.GPIO as GPIO
 # LED strip configuration:
 LED_COUNT = 16  # Number of LED pixels.
 LED_PIN = board.D18  # GPIO pin
-LED_BRIGHTNESS = .1  # LED brightness
+LED_BRIGHTNESS = 0.2  # LED brightness
 LED_ORDER = neopixel.RGBW  # order of LED colors. May also be RGB, GRBW, or RGBW
 
 USERNAME = ""
@@ -27,6 +27,7 @@ GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # The color selection selected for this project: red, blue, yellow, green, pink, and silver respectively
 
 gokai_colors = [(255, 0, 0), (0, 0, 255), (255, 255, 0), (0, 255, 0), (255, 105, 180), (192, 192, 192)]
+red_colors = [(0, 250, 0), (0, 200, 0), (0, 150, 0), (0, 100, 0), (0, 50, 0)]
 
 # Create NeoPixel object with appropriate configuration.
 strip = neopixel.NeoPixel(LED_PIN, LED_COUNT, brightness=LED_BRIGHTNESS, auto_write=False, pixel_order=LED_ORDER)
@@ -91,6 +92,46 @@ async def rollcall_cycle(wait):
             await asyncio.sleep(wait)
 
 
+async def rollcall_cycle_scheme(wait, color_scheme):
+    for j in range(len(color_scheme)):
+        for i in range(10):
+            color1 = color_scheme[j]
+            if j == 5:
+                color2 = (255, 255, 255)
+            else:
+                color2 = color_scheme[(j+1)]
+            percent = i*0.1   # 0.1*100 so 10% increments between colors
+            print("Setting light in rollcall")
+            strip.fill((fade(color1, color2, percent)))
+            strip.show()
+            await asyncio.sleep(wait)
+
+
+async def dim_down(wait, color_scheme):
+    print(f'starting brightness {strip.brightness}')
+    for color in color_scheme:
+        for i in range(2, 0, -1):
+            strip.fill(color)
+            strip.brightness = i / 2.0
+            strip.show()
+            print(f'Fading from {strip.brightness}')
+            await asyncio.sleep(wait)
+        strip.brightness = LED_BRIGHTNESS
+        strip.fill(color)
+        strip.show()
+
+
+async def blink(wait, color):
+    strip.fill(color)
+    strip.brightness = LED_BRIGHTNESS / 2.0
+    strip.show()
+    await asyncio.sleep(wait)
+    strip.brightness = LED_BRIGHTNESS
+    strip.fill(color)
+    strip.show()
+    await asyncio.sleep(wait)
+
+
 async def do_fade(color1, color2, handler):
     print(f'fading from {color1} to {color2}')
     for i in range(10):
@@ -132,8 +173,8 @@ async def change_current_light(t, change_color, handler):
             handler.set_light_data(newColor)
             print("Changed color")
             prevColor = newColor
-        await asyncio.sleep(.2)
-        t -= .2
+        await asyncio.sleep(.05)
+        t -= .05
     return [x_arr, y_arr, z_arr]
 
 
@@ -178,6 +219,13 @@ async def monitor_idle(handler, data):
     event.set()
 
 
+async def blink_red():
+    [x, y, z] = accel_to_color(255, 0, 255)
+    await blink(.5, [int(x), int(y), int(z)])
+    await blink(.5, [int(x), int(y), int(z)])
+    await blink(.5, [int(x), int(y), int(z)])
+
+
 async def maintain_light(handler, data):
     print("Maintain light data:", data)
     mon_idle = loop.create_task(monitor_idle(handler, data))
@@ -197,6 +245,7 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
             print(f'Current color is: {curr_color}')
             message = handler.get_message()
             print(f'Message is: {message}')
+            await blink_red()
             await handler.send_message(message)
             async with lock:
                 mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
@@ -235,10 +284,11 @@ def get_lamp_state(is_idle, handler):
         return LampState.NOTIDLE
 
 
+# This only gets called from the "main" thread
 async def read_light_data(handler):
     while True:
         # Get lamp data
-        is_idle = await calculate_idle(3, handler, True)
+        is_idle = await calculate_idle(.1, handler, True)
         print("Is Idle:", is_idle)
         lamp_state = get_lamp_state(is_idle, handler)
         print("Lamp state is", lamp_state)
@@ -246,6 +296,7 @@ async def read_light_data(handler):
     print("Exiting read light data")
 
 
+# This is called from main or from keep light
 # Returns true or false whether the lamp is idle
 async def calculate_idle(t, handler, change_color):
     orig_time = t
