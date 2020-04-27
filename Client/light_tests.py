@@ -42,6 +42,18 @@ class TestLightMethods(unittest.TestCase):
         self.assertEqual("Finished", result)
         self.assertEqual([255, 255, 0], handler.get_light_data())
 
+    @async_test
+    async def test_blink(self):
+        [x, y, z] = lights.accel_to_color(255, 0, 255)
+        await lights.blink(.5, [int(x), int(y), int(z)])
+        await lights.blink(.5, [int(x), int(y), int(z)])
+        await lights.blink(.5, [int(x), int(y), int(z)])
+        print(f'Ending brightness: {lights.strip.brightness}')
+
+    @async_test
+    async def test_rainbow_cycle(self):
+        await lights.rainbow_cycle(.001)
+
     def test_accel_to_color(self):
         self.assertEqual(lights.accel_to_color(0, 0, 0), (255, 255, 255))
         self.assertEqual(lights.accel_to_color(255, 255, 255), (1, 1, 1))

@@ -61,6 +61,7 @@ async def HandleInput(payload, handler):
     print("Clearing event")
     lights.event.clear()
     async with lock:
+        await lights.rainbow_cycle(.001)
         data = clean_incoming_data(payload)
         mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
         if len(mon_task) > 0:
