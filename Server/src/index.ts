@@ -5,7 +5,7 @@ import { Client } from "./Clients";
 import * as Event from "./EventHandlers";
 import { MessageType } from "./MessageType";
 import { Message } from "./Message";
-import { catService, catWSMessages, catState } from "./LogConfig"
+import { catService, catWSMessages, catState } from "./LogConfig";
 
 
 const port = parseInt(process.env.PORT) || 8081;
@@ -29,11 +29,11 @@ wss.on("connection", (ws: WebSocket) => {
   ws.on("message", (message: string) => {
     try {
       const event: Message = JSON.parse(message);
-      catWSMessages.debug(() => `Received a message: ${message}`)
+      catWSMessages.debug(() => `Received a message: ${message}`);
       catWSMessages.debug(() => `type: ${event.type}, payload: ${event.payload}`);
       ws.emit(event.type, event.payload);
     } catch (err) {
-      catWSMessages.error("Invalid Message. Message parsed failed.", SyntaxError)
+      catWSMessages.error("Invalid Message. Message parsed failed.", SyntaxError);
     }
   })
     .on(
@@ -49,6 +49,6 @@ wss.on("connection", (ws: WebSocket) => {
 // Todo
 setInterval(() => {
   people = people.filter(p => p.client.readyState != WebSocket.CLOSED);
-  catState.debug("Current people:")
+  catState.debug("Current people:");
   people.forEach(p => catState.debug(p.username));
 }, 2000);

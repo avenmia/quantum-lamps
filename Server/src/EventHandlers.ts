@@ -1,7 +1,7 @@
 import SharedSecret from "./Secret";
 import { Client } from "./Clients";
 import { MessageType } from "./MessageType";
-import { catService, catWSMessages, catState } from "./LogConfig"
+import { catWSMessages, catState } from "./LogConfig";
 
 let num = 0;
 
