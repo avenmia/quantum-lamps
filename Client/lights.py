@@ -6,6 +6,7 @@ import neopixel
 import numpy as np
 import asyncio
 import math
+import logging
 from lamp_states import LampState
 import RPi.GPIO as GPIO
 
@@ -86,11 +87,11 @@ async def rollcall_cycle(wait):
             else:
                 color2 = gokai_colors[(j+1)]
             percent = i*0.1   # 0.1*100 so 10% increments between colors
-            print("Setting light in rollcall")
+            logging.debug("Setting light in rollcall")
             strip.fill((fade(color1, color2, percent)))
             strip.show()
             await asyncio.sleep(wait)
-
+            
 
 async def rollcall_cycle_scheme(wait, color_scheme):
     for j in range(len(color_scheme)):
@@ -101,20 +102,20 @@ async def rollcall_cycle_scheme(wait, color_scheme):
             else:
                 color2 = color_scheme[(j+1)]
             percent = i*0.1   # 0.1*100 so 10% increments between colors
-            print("Setting light in rollcall")
+            logging.debug("Setting light in rollcall")
             strip.fill((fade(color1, color2, percent)))
             strip.show()
             await asyncio.sleep(wait)
 
 
 async def dim_down(wait, color_scheme):
-    print(f'starting brightness {strip.brightness}')
+    logging.debug(f'starting brightness {strip.brightness}')
     for color in color_scheme:
         for i in range(2, 0, -1):
             strip.fill(color)
             strip.brightness = i / 2.0
             strip.show()
-            print(f'Fading from {strip.brightness}')
+            logging.debug(f'Fading from {strip.brightness}')
             await asyncio.sleep(wait)
         strip.brightness = LED_BRIGHTNESS
         strip.fill(color)
@@ -133,7 +134,7 @@ async def blink(wait, color):
 
 
 async def do_fade(color1, color2, handler):
-    print(f'fading from {color1} to {color2}')
+    logging.debug(f'fading from {color1} to {color2}')
     for i in range(10):
         percent = i*0.1   # 0.1*100 so 10% increments between colors
         strip.fill((fade(color1, color2, percent)))
@@ -142,7 +143,7 @@ async def do_fade(color1, color2, handler):
 
 
 def is_lamp_idle(sx, sy, sz):
-    return sx < 0.3 or sy < 0.3 or sz < 0.3
+    return sx < 0.5 or sy < 0.5 or sz < 0.5
 
 
 async def rainbow_cycle(wait):
@@ -168,10 +169,10 @@ async def change_current_light(t, change_color, handler):
         if change_color:
             await event.wait()
             # remember prev color
-            print("Changing color")
+            logging.debug("Changing color")
             await do_fade(prevColor, newColor, handler)
             handler.set_light_data(newColor)
-            print("Changed color")
+            logging.debug("Changed color")
             prevColor = newColor
         await asyncio.sleep(.05)
         t -= .05
@@ -184,18 +185,18 @@ async def change_current_light(t, change_color, handler):
 async def keep_light(handler, data):
     if handler.get_light_data() != data:
         handler.set_light_data(data)
-    print(f'Setting light in keep light to: {handler.get_light_data()}')
+    logging.debug(f'Setting light in keep light to: {handler.get_light_data()}')
     set_light(handler)
     while True:
         is_idle = await calculate_idle(1, handler, False)
         set_light(handler)
         new_message = handler.get_new_message()
         # If not idle or incoming message
-        print("Is Idle:", is_idle)
-        print("New Message", new_message)
-        print(f'Current light in keep light to: {handler.get_light_data()}')
+        logging.debug(f'Is Idle: {is_idle}')
+        logging.debug(f'New Message {new_message}')
+        logging.debug(f'Current light in keep light to: {handler.get_light_data()}')
         if not is_idle or new_message:
-            print("Breaking freeeeee")
+            logging.debug("Breaking freeeeee")
             break
     await asyncio.sleep(1)
     return "Finished"
@@ -209,11 +210,11 @@ def set_light(handler):
 async def monitor_idle(handler, data):
     is_idle = True
     if handler.get_light_data() != data:
-        print(f'Setting light data back: {data}')
+        logging.debug(f'Setting light data back: {data}')
         handler.set_light_data(data)
     while is_idle:
         is_idle = await calculate_idle(1, handler, False)
-        print(f'Is idle:', is_idle)
+        logging.debug(f'Is idle: {is_idle}')
         handler.set_light_data(data)
         set_light(handler)
     event.set()
@@ -226,8 +227,15 @@ async def blink_red():
     await blink(.5, [int(x), int(y), int(z)])
 
 
+async def blink_green():
+    [x, y, z] = accel_to_color(0, 255, 255)
+    await blink(.5, [int(x), int(y), int(z)])
+    await blink(.5, [int(x), int(y), int(z)])
+    await blink(.5, [int(x), int(y), int(z)])
+
+
 async def maintain_light(handler, data):
-    print("Maintain light data:", data)
+    logging.debug(f'Maintain light data: {data}')
     mon_idle = loop.create_task(monitor_idle(handler, data))
     mon_idle.set_name("monitor_idle")
     loop.call_soon_threadsafe(asyncio.ensure_future, mon_idle)
@@ -240,29 +248,34 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
         if not input_message:
             # Send Message
             event.clear()
+            logging.info("Handling user set light")
             curr_color = handler.get_light_data()
-            handler.create_message("Input", curr_color)
-            print(f'Current color is: {curr_color}')
-            message = handler.get_message()
-            print(f'Message is: {message}')
-            await blink_red()
-            await handler.send_message(message)
+            if handler.get_connection():
+                handler.create_message("Input", curr_color)
+                message = handler.get_message()
+                logging.debug(f'Message is: {message}')
+                await blink_red()
+                await handler.send_message(message)
+            else:
+                await blink_green()
+            logging.debug(f'Current color is: {curr_color}')
+
             async with lock:
                 mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
                 if len(mon_task) > 0:
-                    print("Canceling previous mon task")
+                    logging.debug("Canceling previous mon task")
                     mon_task[0].cancel()
                 await maintain_light(handler, curr_color)
-            print("Releasing lock in current lamp")
+            logging.debug("Releasing lock in current lamp")
         else:
-            print("Input message")
+            logging.info("Handling input message")
     elif lamp_state == LampState.IDLE:
-        print("Lamp is idle")
+        logging.info("Lamp is idle and connected")
     elif lamp_state == LampState.IDLENOTCONNECT:
-        print("Idle and not connected")
+        logging.info("Lamp is idle and not connected")
     else:
         event.set()
-        print("Not Idle")
+        logging.info("Lamp is not Idle")
 
 
 def get_lamp_state(is_idle, handler):
@@ -276,9 +289,9 @@ def get_lamp_state(is_idle, handler):
         # Check for data
         STATE = "IDLE"
         return LampState.IDLE
-    elif is_idle and not is_connected:
-        STATE = "IDLE not connected"
-        return LampState.IDLENOTCONNECT
+    elif is_idle and STATE == "NOT IDLE" and not is_connected:
+        STATE = "IDLE"
+        return LampState.SETLIGHT
     else:
         STATE = "NOT IDLE"
         return LampState.NOTIDLE
@@ -289,11 +302,11 @@ async def read_light_data(handler):
     while True:
         # Get lamp data
         is_idle = await calculate_idle(.1, handler, True)
-        print("Is Idle:", is_idle)
+        logging.debug(f'Is Idle: {is_idle}')
         lamp_state = get_lamp_state(is_idle, handler)
-        print("Lamp state is", lamp_state)
         await handle_current_lamp_state(lamp_state, False, handler)
-    print("Exiting read light data")
+    logging.debug("Exiting read light data")
+
 
 
 # This is called from main or from keep light

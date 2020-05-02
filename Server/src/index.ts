@@ -25,7 +25,6 @@ const wss = new WebSocket.Server({ port, server });
 catService.info("Starting Websocket server");
 
 wss.on("connection", (ws: WebSocket) => {
-
   ws.on("message", (message: string) => {
     try {
       const event: Message = JSON.parse(message);

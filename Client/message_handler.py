@@ -1,4 +1,5 @@
 import json
+import logging
 
 
 class MessageHandler:
@@ -36,7 +37,7 @@ class MessageHandler:
         return self.current_state
 
     def set_light_data(self, data):
-        print("Data is :", data)
+        logging.debug(f'Data is: {data}')
         self.light_data = data
 
     def get_light_data(self):
@@ -46,7 +47,7 @@ class MessageHandler:
         return self.new_message
 
     def set_new_message(self, data):
-        print("Setting message to:", data)
+        logging.debug(f'Setting message to: {data}')
         self.new_message = data
 
     def create_message(self, message_type, message_data):
