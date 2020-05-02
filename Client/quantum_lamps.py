@@ -50,7 +50,7 @@ async def parseMessage(ws, message, handler):
 
 def HandleUsername(payload):
     global USERNAME
-    print("Username")
+    logging.debug("Username")
     USERNAME = payload
     return json.dumps(
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
@@ -58,7 +58,7 @@ def HandleUsername(payload):
 
 async def HandleInput(payload, handler):
     lock = lights.lock
-    print("Clearing event")
+    logging.debug("Clearing event")
     lights.event.clear()
     async with lock:
         await lights.rainbow_cycle(.001)
@@ -78,14 +78,14 @@ def clean_incoming_data(payload):
 
 def HandleClosing():
     global USERNAME
-    print("Closing connection")
+    logging.info("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
 
 
 def HandleClose():
     # Shouldn't get hit
-    print("Close connection")
+    logging.info("Close connection")
 
 
 async def sendMessage(ws, message, recieve, handler):
@@ -107,20 +107,23 @@ async def handleMessages(ws, message, handler):
 async def init_connection(message, handler):
     global CLIENT_WS
     uri = WS_URI
-    async with websockets.connect(uri) as websocket:
-        handler.set_connection(True)
-        handler.set_websocket(websocket)
-        is_connected = handler.get_connection()
-        CLIENT_WS = websocket
-        await websocket.send(message)
-        print("Connection is open")
-        while is_connected:
-            print("Still connected")
-            await handleMessages(websocket, message, handler)
-            # if GPIO.input(15) == GPIO.LOW:
-            #         print("Button was pushed")
-        await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
-        await websocket.close()
+    try:
+        logging.info("Connecting to server")
+        async with websockets.connect(uri) as websocket:
+            handler.set_connection(True)
+            handler.set_websocket(websocket)
+            is_connected = handler.get_connection()
+            CLIENT_WS = websocket
+            await websocket.send(message)
+            logging.info("Connection is open")
+            while is_connected:
+                await handleMessages(websocket, message, handler)
+                # if GPIO.input(15) == GPIO.LOW:
+                #         print("Button was pushed")
+            await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
+            await websocket.close()
+    except:
+        logging.error("Could not connect to web server")
 ##########################################################
 
 
