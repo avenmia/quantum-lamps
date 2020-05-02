@@ -112,36 +112,57 @@ async def init_connection(message, handler):
         async with websockets.connect(uri) as websocket:
             handler.set_connection(True)
             handler.set_websocket(websocket)
-            is_connected = handler.get_connection()
             CLIENT_WS = websocket
             await websocket.send(message)
             logging.info("Connection is open")
-            while is_connected:
-                await handleMessages(websocket, message, handler)
+            
+            await handleMessages(websocket, message, handler)
                 # if GPIO.input(15) == GPIO.LOW:
                 #         print("Button was pushed")
-            await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
+            logging.info("Connection is closed")
+            # await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
             await websocket.close()
     except:
         logging.error("Could not connect to web server")
 ##########################################################
 
+def get_connection_retry_time(t):
+    if t == 16:
+        return 16
+    else:
+        return t * 2
 
-async def main():
-    handler = MessageHandler()
+async def ensure_connection(handler):
     message = json.dumps({'type': "Auth", 'payload': {
         'username': 'Mike', 'secret': SHARED_SECRET}})
+    t = 1
+    while True:
+        logging.info("Establishing connection")
+        await init_connection(message, handler)
+        logging.info("Connection closed")
+        handler.set_connection(False)
+        await asyncio.sleep(t)
+        t = get_connection_retry_time(t)
+        logging.info(f'Retrying connection in {t} seconds')
 
+
+
+async def main():
+    handler = MessageHandler()    
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
-    connect = asyncio.create_task(init_connection(message, handler))
+    connect = asyncio.create_task(ensure_connection(handler))
     connect.set_name("ws connect")
 
     lights.event.set()
 
+    something = await connect
+    print(f'Something is: {something}')
+
     await asyncio.gather(connect, start_light)
 
+
 lights.loop.set_debug(True)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 lights.loop.run_until_complete(main())
