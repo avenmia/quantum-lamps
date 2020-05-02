@@ -226,6 +226,7 @@ async def blink_red():
     await blink(.5, [int(x), int(y), int(z)])
     await blink(.5, [int(x), int(y), int(z)])
 
+
 async def blink_green():
     [x, y, z] = accel_to_color(0, 255, 255)
     await blink(.5, [int(x), int(y), int(z)])
@@ -257,9 +258,8 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
                 await handler.send_message(message)
             else:
                 await blink_green()
-
             logging.debug(f'Current color is: {curr_color}')
-    
+
             async with lock:
                 mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
                 if len(mon_task) > 0:

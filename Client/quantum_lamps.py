@@ -115,22 +115,20 @@ async def init_connection(message, handler):
             CLIENT_WS = websocket
             await websocket.send(message)
             logging.info("Connection is open")
-            
             await handleMessages(websocket, message, handler)
-                # if GPIO.input(15) == GPIO.LOW:
-                #         print("Button was pushed")
             logging.info("Connection is closed")
-            # await websocket.send(json.dumps({'type': MessageType.Close.name, 'message': USERNAME}))
             await websocket.close()
-    except:
-        logging.error("Could not connect to web server")
+    except TimeoutError as err:
+        logging.error(f'Could not connect to web server {err}')
 ##########################################################
+
 
 def get_connection_retry_time(t):
     if t == 16:
         return 16
     else:
         return t * 2
+
 
 async def ensure_connection(handler):
     message = json.dumps({'type': "Auth", 'payload': {
@@ -146,9 +144,8 @@ async def ensure_connection(handler):
         logging.info(f'Retrying connection in {t} seconds')
 
 
-
 async def main():
-    handler = MessageHandler()    
+    handler = MessageHandler()
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
@@ -164,5 +161,5 @@ async def main():
 
 
 lights.loop.set_debug(True)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 lights.loop.run_until_complete(main())
