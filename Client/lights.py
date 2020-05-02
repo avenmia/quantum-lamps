@@ -91,7 +91,7 @@ async def rollcall_cycle(wait):
             strip.fill((fade(color1, color2, percent)))
             strip.show()
             await asyncio.sleep(wait)
-
+            
 
 async def rollcall_cycle_scheme(wait, color_scheme):
     for j in range(len(color_scheme)):
@@ -306,6 +306,7 @@ async def read_light_data(handler):
         lamp_state = get_lamp_state(is_idle, handler)
         await handle_current_lamp_state(lamp_state, False, handler)
     logging.debug("Exiting read light data")
+
 
 
 # This is called from main or from keep light
