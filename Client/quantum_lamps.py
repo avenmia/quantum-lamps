@@ -164,5 +164,5 @@ async def main():
 
 
 lights.loop.set_debug(True)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 lights.loop.run_until_complete(main())

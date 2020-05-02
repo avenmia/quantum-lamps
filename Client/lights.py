@@ -214,7 +214,7 @@ async def monitor_idle(handler, data):
         handler.set_light_data(data)
     while is_idle:
         is_idle = await calculate_idle(1, handler, False)
-        logging.debug(f'Is idle:', is_idle)
+        logging.debug(f'Is idle: {is_idle}')
         handler.set_light_data(data)
         set_light(handler)
     event.set()
@@ -241,13 +241,16 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
         if not input_message:
             # Send Message
             event.clear()
+            logging.info("Handling user set light")
             curr_color = handler.get_light_data()
-            handler.create_message("Input", curr_color)
+            if handler.get_connection():
+                handler.create_message("Input", curr_color)
+                message = handler.get_message()
+                logging.debug(f'Message is: {message}')
+                await blink_red()
+                await handler.send_message(message)
             logging.debug(f'Current color is: {curr_color}')
-            message = handler.get_message()
-            logging.debug(f'Message is: {message}')
-            await blink_red()
-            await handler.send_message(message)
+    
             async with lock:
                 mon_task = [x for x in asyncio.all_tasks() if x.get_name() == "monitor_idle"]
                 if len(mon_task) > 0:
@@ -256,14 +259,14 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
                 await maintain_light(handler, curr_color)
             logging.debug("Releasing lock in current lamp")
         else:
-            logging.debug("Input message")
+            logging.info("Handling input message")
     elif lamp_state == LampState.IDLE:
-        logging.debug("Lamp is idle")
+        logging.info("Lamp is idle and connected")
     elif lamp_state == LampState.IDLENOTCONNECT:
-        logging.debug("Idle and not connected")
+        logging.info("Lamp is idle and not connected")
     else:
         event.set()
-        logging.debug("Not Idle")
+        logging.info("Lamp is not Idle")
 
 
 def get_lamp_state(is_idle, handler):
@@ -277,9 +280,9 @@ def get_lamp_state(is_idle, handler):
         # Check for data
         STATE = "IDLE"
         return LampState.IDLE
-    elif is_idle and not is_connected:
-        STATE = "IDLE not connected"
-        return LampState.IDLENOTCONNECT
+    elif is_idle and STATE == "NOT IDLE" and not is_connected:
+        STATE = "IDLE"
+        return LampState.SETLIGHT
     else:
         STATE = "NOT IDLE"
         return LampState.NOTIDLE
@@ -292,7 +295,6 @@ async def read_light_data(handler):
         is_idle = await calculate_idle(.1, handler, True)
         logging.debug(f'Is Idle: {is_idle}')
         lamp_state = get_lamp_state(is_idle, handler)
-        logging.debug(f'Lamp state is {lamp_state}')
         await handle_current_lamp_state(lamp_state, False, handler)
     logging.debug("Exiting read light data")
 
