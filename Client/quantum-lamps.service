@@ -1,0 +1,12 @@
+[Unit]
+Description=Quantum Lamps Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/python3 /root/quantum-lamps/Client/quantum_lamps.py
+User=root
+
+[Install]
+WantedBy=multi-user.target
