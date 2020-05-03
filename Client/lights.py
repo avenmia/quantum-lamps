@@ -15,6 +15,9 @@ LED_COUNT = 16  # Number of LED pixels.
 LED_PIN = board.D18  # GPIO pin
 LED_BRIGHTNESS = 0.2  # LED brightness
 LED_ORDER = neopixel.RGBW  # order of LED colors. May also be RGB, GRBW, or RGBW
+ACCEL_RED = (255, 0, 255)
+ACCEL_GREEN = (0, 255, 255)
+
 
 USERNAME = ""
 STATE = "IDLE"
@@ -76,51 +79,7 @@ def wheel(pos):
         g = int(pos*3)
         b = int(255 - pos*3)
     return (r, g, b) if LED_ORDER == neopixel.RGB or LED_ORDER == neopixel.GRB else (r, g, b, 0)
-
-
-async def rollcall_cycle(wait):
-    for j in range(len(gokai_colors)):
-        for i in range(10):
-            color1 = gokai_colors[j]
-            if j == 5:
-                color2 = (255, 255, 255)
-            else:
-                color2 = gokai_colors[(j+1)]
-            percent = i*0.1   # 0.1*100 so 10% increments between colors
-            logging.debug("Setting light in rollcall")
-            strip.fill((fade(color1, color2, percent)))
-            strip.show()
-            await asyncio.sleep(wait)
             
-
-async def rollcall_cycle_scheme(wait, color_scheme):
-    for j in range(len(color_scheme)):
-        for i in range(10):
-            color1 = color_scheme[j]
-            if j == 5:
-                color2 = (255, 255, 255)
-            else:
-                color2 = color_scheme[(j+1)]
-            percent = i*0.1   # 0.1*100 so 10% increments between colors
-            logging.debug("Setting light in rollcall")
-            strip.fill((fade(color1, color2, percent)))
-            strip.show()
-            await asyncio.sleep(wait)
-
-
-async def dim_down(wait, color_scheme):
-    logging.debug(f'starting brightness {strip.brightness}')
-    for color in color_scheme:
-        for i in range(2, 0, -1):
-            strip.fill(color)
-            strip.brightness = i / 2.0
-            strip.show()
-            logging.debug(f'Fading from {strip.brightness}')
-            await asyncio.sleep(wait)
-        strip.brightness = LED_BRIGHTNESS
-        strip.fill(color)
-        strip.show()
-
 
 async def blink(wait, color):
     strip.fill(color)
@@ -220,15 +179,8 @@ async def monitor_idle(handler, data):
     event.set()
 
 
-async def blink_red():
-    [x, y, z] = accel_to_color(255, 0, 255)
-    await blink(.5, [int(x), int(y), int(z)])
-    await blink(.5, [int(x), int(y), int(z)])
-    await blink(.5, [int(x), int(y), int(z)])
-
-
-async def blink_green():
-    [x, y, z] = accel_to_color(0, 255, 255)
+async def blink_color(accel_color):
+    [x, y, z] = accel_color
     await blink(.5, [int(x), int(y), int(z)])
     await blink(.5, [int(x), int(y), int(z)])
     await blink(.5, [int(x), int(y), int(z)])
@@ -254,10 +206,10 @@ async def handle_current_lamp_state(lamp_state, input_message, handler):
                 handler.create_message("Input", curr_color)
                 message = handler.get_message()
                 logging.debug(f'Message is: {message}')
-                await blink_red()
+                await blink_color(ACCEL_RED)
                 await handler.send_message(message)
             else:
-                await blink_green()
+                await blink_color(ACCEL_GREEN)
             logging.debug(f'Current color is: {curr_color}')
 
             async with lock:
