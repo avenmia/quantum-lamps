@@ -292,6 +292,9 @@ def get_lamp_state(is_idle, handler):
     elif is_idle and STATE == "NOT IDLE" and not is_connected:
         STATE = "IDLE"
         return LampState.SETLIGHT
+    elif is_idle and not is_connected:
+        STATE = "IDLE"
+        return LampState.IDLENOTCONNECT
     else:
         STATE = "NOT IDLE"
         return LampState.NOTIDLE
