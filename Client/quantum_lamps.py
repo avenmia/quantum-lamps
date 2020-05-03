@@ -146,18 +146,19 @@ async def ensure_connection(handler):
 
 async def main():
     handler = MessageHandler()
+
+    logging.debug("Starting light task")
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
+    logging.debug("Starting web socket task")
     connect = asyncio.create_task(ensure_connection(handler))
     connect.set_name("ws connect")
 
     lights.event.set()
 
-    something = await connect
-    print(f'Something is: {something}')
-
     await asyncio.gather(connect, start_light)
+
 
 if __name__ == '__main__':
     lights.loop.set_debug(True)
