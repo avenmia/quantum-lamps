@@ -6,7 +6,6 @@
   "scripts": {
     "pretest": "eslint src/**/*.ts",
     "build": "tsc",
-    "prestart": "npm run build",
     "start": "node ./dist",
     "watch": "nodemon --exec ts-node src/index.ts"
   },
