@@ -16,7 +16,12 @@ docker run --device /dev/gpiomem -d quantum-lamps-client
 
 ### Server
 
+Docker configuration required to use packages:
+https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-docker-for-use-with-github-packages
+
 ```sh
+docker pull docker.pkg.github.com/avenmia/quantum-lamps/server:{version}
+docker build -t quantum-lamps-server
 docker run -p 8080 -d quantum-lamps-server
 ```
 
