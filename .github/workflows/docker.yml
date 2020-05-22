@@ -6,7 +6,7 @@ jobs:
   build-client:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Client - build image
       run: |
         pushd ./Client
@@ -14,7 +14,7 @@ jobs:
   build-server:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Server - build image
       run: |
         pushd ./Server
