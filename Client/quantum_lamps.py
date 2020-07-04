@@ -33,22 +33,22 @@ class Message:
         self.payload = payload
 
 
-async def parseMessage(ws, message, handler):
-    send_message = ""
+async def parse_message(ws, message, handler):
+    message_to_send = ""
     rec_message = Message(message['type'], message['payload'])
     if rec_message.message_type == MessageType.Username.name:
-        send_message = HandleUsername(rec_message.payload)
+        message_to_send = handle_username(rec_message.payload)
     elif rec_message.message_type == MessageType.Input.name:
-        await HandleInput(rec_message.payload, handler)
+        await handle_input(rec_message.payload, handler)
         return
     elif rec_message.message_type == MessageType.Closing.name:
-        send_message = HandleClosing()
+        message_to_send = handle_closing()
     elif rec_message.message_type == MessageType.Close.name:
-        HandleClose()
-    await sendMessage(ws, send_message, True, handler)
+        handle_close()
+    await send_message(ws, message_to_send, True, handler)
 
 
-def HandleUsername(payload):
+def handle_username(payload):
     global USERNAME
     logging.debug("Username")
     USERNAME = payload
@@ -56,7 +56,7 @@ def HandleUsername(payload):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-async def HandleInput(payload, handler):
+async def handle_input(payload, handler):
     lock = lights.lock
     logging.debug("Clearing event")
     lights.event.clear()
@@ -76,30 +76,30 @@ def clean_incoming_data(payload):
     return [int(x), int(y), int(z)]
 
 
-def HandleClosing():
+def handle_closing():
     global USERNAME
     logging.info("Closing connection")
     return json.dumps(
         {'type': MessageType.Close.name, 'payload': USERNAME})
 
 
-def HandleClose():
+def handle_close():
     # Shouldn't get hit
     logging.info("Close connection")
 
 
-async def sendMessage(ws, message, recieve, handler):
+async def send_message(ws, message, recieve, handler):
     await ws.send(message)
     if recieve:
         server_message = json.loads(await ws.recv())
-        message = await parseMessage(ws, server_message, handler)
+        message = await parse_message(ws, server_message, handler)
 
 
-async def handleMessages(ws, message, handler):
+async def handle_messages(ws, message, handler):
     try:
         async for message in ws:
             server_message = json.loads(message)
-            await parseMessage(ws, server_message, handler)
+            await parse_message(ws, server_message, handler)
     except websockets.exceptions.ConnectionClosed:
         pass
 
@@ -115,7 +115,7 @@ async def init_connection(message, handler):
             CLIENT_WS = websocket
             await websocket.send(message)
             logging.info("Connection is open")
-            await handleMessages(websocket, message, handler)
+            await handle_messages(websocket, message, handler)
             logging.info("Connection is closed")
             await websocket.close()
     except TimeoutError as err:
@@ -146,20 +146,22 @@ async def ensure_connection(handler):
 
 async def main():
     handler = MessageHandler()
+
+    logging.debug("Starting light task")
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
+    #logging.debug("Starting web socket task")
     connect = asyncio.create_task(ensure_connection(handler))
     connect.set_name("ws connect")
 
     lights.event.set()
 
-    something = await connect
-    print(f'Something is: {something}')
-
     await asyncio.gather(connect, start_light)
+    # await asyncio.gather(start_light)
 
 
-lights.loop.set_debug(True)
-logging.basicConfig(level=logging.INFO)
-lights.loop.run_until_complete(main())
+if __name__ == '__main__':
+    lights.loop.set_debug(True)
+    logging.basicConfig(level=logging.INFO)
+    lights.loop.run_until_complete(main())
