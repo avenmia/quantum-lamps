@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 LED_COUNT = 16  # Number of LED pixels.
 LED_PIN = board.D18  # GPIO pin
 LED_BRIGHTNESS = 0.2  # LED brightness
-LED_ORDER = neopixel.RGBW  # order of LED colors. May also be RGB, GRBW, or RGBW
+LED_ORDER = neopixel.GRBW # order of LED colors. May also be RGB, GRBW, or RGBW
 ACCEL_RED = (255, 0, 255)
 ACCEL_GREEN = (0, 255, 255)
 

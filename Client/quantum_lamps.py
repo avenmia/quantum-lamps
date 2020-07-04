@@ -151,13 +151,14 @@ async def main():
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
-    logging.debug("Starting web socket task")
+    #logging.debug("Starting web socket task")
     connect = asyncio.create_task(ensure_connection(handler))
     connect.set_name("ws connect")
 
     lights.event.set()
 
     await asyncio.gather(connect, start_light)
+    # await asyncio.gather(start_light)
 
 
 if __name__ == '__main__':
