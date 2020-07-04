@@ -4,5 +4,5 @@ export enum MessageType {
   Auth = "Auth",
   Input = "Input",
   Listening = "Listening",
-  Username = "Username"
+  Username = "Username",
 }
