@@ -1,0 +1,101 @@
+name: CI/CD
+
+on:
+  push:
+  create:
+  release:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          pushd ./client
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          pushd ./client
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: server - npm install, build, and test
+        run: |
+          pushd ./server
+          npm ci
+          npm run test --if-present
+          npm run build --if-present
+          popd
+        env:
+          CI: true
+
+  build-docker-server:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build-image
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: ${{ github.repository }}/server
+        dockerfile: server/Dockerfile
+        tag_with_ref: true
+        push: ${{ (startsWith(github.ref, 'refs/tags/') }}
+
+  build-docker-client:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Docker Buildx
+      uses: crazy-max/ghaction-docker-buildx@v3
+    - name: Docker Buildx (build)
+      run: |
+        docker buildx build --output "type=image,push=false" --platform linux/arm/v6,linux/arm/v7 --tag quantum-lamps-client .
+    - name: Docker Push
+      if: startsWith(github.ref, 'refs/tags/')
+      env:
+        REGISTRY_USERNAME: ${{ github.actor }}
+        REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        REGISTRY_HOST: docker.pkg.github.com
+      run: |
+        echo "${REGISTRY_PASSWORD}" | docker login ${REGISTRY_HOST} --username "${REGISTRY_USERNAME}" --password-stdin
+        docker tag quantum-lamps-client ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')
+        docker push ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')
+
+  trigger-webhooks:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    steps:
+    - name: Trigger Webhooks
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        curl -X POST -H "Content-Type: application/json" -d "{}" '${{ secrets.SERVER_WEBHOOK }}'
