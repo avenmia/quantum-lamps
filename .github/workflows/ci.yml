@@ -98,8 +98,10 @@ jobs:
         REGISTRY_HOST: docker.pkg.github.com
       run: |
         if [[ $GITHUB_REF == refs/tags/* ]]; then
-          PUSH=true
+          PUSH='true'
           TAGS='--tag ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')'
+        else
+          PUSH='false'
         fi
         docker buildx build \
           --cache-from "type=local,src=/tmp/.buildx-cache" \
