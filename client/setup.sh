@@ -9,7 +9,7 @@ curl -fsSL https://get.docker.com | sh
 curl -fsSL -o master.zip https://github.com/avenmia/quantum-lamps/archive/master.zip
 unzip master.zip
 rm master.zip
-cd quantum-lamps-master/Client
+cd quantum-lamps-master/client
 docker build -t quantum-lamps-client .
 
 cat << EOF > .env
