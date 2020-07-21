@@ -77,10 +77,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set up Docker Buildx
       uses: crazy-max/ghaction-docker-buildx@v3
-    - name: Docker Buildx (build)
-      run: |
-        docker buildx build --output "type=image,push=false" --platform linux/arm/v6,linux/arm/v7 --tag quantum-lamps-client client
-    - name: Docker Push
+    - name: Docker Login
       if: startsWith(github.ref, 'refs/tags/')
       env:
         REGISTRY_USERNAME: ${{ github.actor }}
@@ -88,8 +85,28 @@ jobs:
         REGISTRY_HOST: docker.pkg.github.com
       run: |
         echo "${REGISTRY_PASSWORD}" | docker login ${REGISTRY_HOST} --username "${REGISTRY_USERNAME}" --password-stdin
-        docker tag quantum-lamps-client ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')
-        docker push ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g')
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      id: cache
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+    - name: Docker Buildx
+      env:
+        REGISTRY_HOST: docker.pkg.github.com
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          PUSH=true
+        fi
+        docker buildx build \
+          --cache-from "type=local,src=/tmp/.buildx-cache" \
+          --cache-to "type=local,dest=/tmp/.buildx-cache" \
+          --output "type=image,push=${PUSH}" \
+          --platform linux/arm/v6,linux/arm/v7 \
+          --tag ${REGISTRY_HOST}/${{ github.repository }}/client:$(echo ${{ github.ref }} | sed 's/refs\/tags\///g') \
+          client
 
   trigger-webhooks:
     runs-on: ubuntu-latest
