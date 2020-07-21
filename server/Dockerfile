@@ -3,12 +3,11 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 FROM base as build
-RUN apk add --no-cache --virtual /tmp/.gyp \
+RUN apk add --no-cache --update \
     python \
     make \
-    g++ \
-    && npm ci \
-    && apk del /tmp/.gyp
+    g++
+RUN npm ci
 COPY . .
 RUN  npm run build
 
