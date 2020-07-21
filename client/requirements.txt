@@ -1,0 +1,9 @@
+adafruit-circuitpython-lis3dh
+adafruit-circuitpython-neopixel
+adafruit-blinka
+adafruit-circuitpython-busdevice
+RPi.GPIO
+websockets
+python-dotenv
+numpy
+rpi_ws281x
