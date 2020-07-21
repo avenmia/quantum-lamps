@@ -5,5 +5,5 @@ adafruit-circuitpython-busdevice
 RPi.GPIO
 websockets
 python-dotenv
-contextvars
 numpy
+rpi_ws281x
