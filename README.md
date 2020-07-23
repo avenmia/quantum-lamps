@@ -7,7 +7,7 @@
 ### Client
 
 ```bash
-curl https://raw.githubusercontent.com/avenmia/quantum-lamps/master/client/setup.sh | bash -s ws://quantum-lamps-server secret username latest
+curl https://raw.githubusercontent.com/avenmia/quantum-lamps/master/setup.sh | bash -s ws://quantum-lamps-server secret username latest
 ```
 
 ### Server
