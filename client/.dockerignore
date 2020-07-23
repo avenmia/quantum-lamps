@@ -1,0 +1,4 @@
+.env.example
+requirements.txt
+setup.sh
+Dockerfile
