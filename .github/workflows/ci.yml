@@ -91,15 +91,14 @@ jobs:
         REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
       run: |
         PUSH=false
+        VERSION=temp
         DOCKER_IMAGE=${REGISTRY_HOST}/${{ github.repository }}-${{ matrix.project }}
 
-        if [[ $GITHUB_REF == refs/tags/* ]]; then
+        if [[ $GITHUB_REF == refs/tags/v* ]]; then
           VERSION=${GITHUB_REF#refs/tags/v}
           PUSH=true
         fi
-        if [ "${{ github.event_name }}" = "schedule" ]; then
-          VERSION=nightly
-        fi
+
         TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
 
         if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
