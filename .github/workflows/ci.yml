@@ -20,7 +20,6 @@ jobs:
         id: pip-cache
         run: |
           echo "::set-output name=dir::$(pip cache dir)"
-
       - name: pip cache
         uses: actions/cache@v2
         with:
@@ -108,6 +107,11 @@ jobs:
 
         if [[ $GITHUB_REF == refs/tags/v* ]]; then
           VERSION=${GITHUB_REF#refs/tags/v}
+          PUSH=true
+        fi
+
+        if [[ $GITHUB_REF == refs/heads/master ]]; then
+          VERSION=master
           PUSH=true
         fi
 
