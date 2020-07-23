@@ -8,16 +8,19 @@ from message_handler import MessageHandler
 from enum import Enum
 import lights
 import logging
+from typing import Tuple
 
 from dotenv import load_dotenv
 load_dotenv()
+
+# Environment Variables
 SHARED_SECRET = os.environ['SHARED_SECRET']
 WS_URI = os.environ['WS_URI']
+USER_NAME = os.environ['USER_NAME']
 
 CLIENT_WS = None
 
 
-# WebSocket Code #
 class MessageType(Enum):
     Close = 1
     Closing = 2
@@ -28,12 +31,12 @@ class MessageType(Enum):
 
 
 class Message:
-    def __init__(self, message_type, payload):
+    def __init__(self, message_type: MessageType, payload: any):
         self.message_type = message_type
         self.payload = payload
 
 
-async def parse_message(ws, message, handler):
+async def parse_message(ws, message: Message, handler: MessageHandler) -> None:
     message_to_send = ""
     rec_message = Message(message['type'], message['payload'])
     if rec_message.message_type == MessageType.Username.name:
@@ -48,7 +51,7 @@ async def parse_message(ws, message, handler):
     await send_message(ws, message_to_send, True, handler)
 
 
-def handle_username(payload):
+def handle_username(payload: str):
     global USERNAME
     logging.debug("Username")
     USERNAME = payload
@@ -56,7 +59,7 @@ def handle_username(payload):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-async def handle_input(payload, handler):
+async def handle_input(payload: Tuple[str, str, str], handler: MessageHandler):
     lock = lights.lock
     logging.debug("Clearing event")
     lights.event.clear()
@@ -71,7 +74,7 @@ async def handle_input(payload, handler):
         {'type': MessageType.Listening.name, 'payload': 'Listening'})
 
 
-def clean_incoming_data(payload):
+def clean_incoming_data(payload: Tuple[str, str, str]):
     [x, y, z] = tuple(payload)
     return [int(x), int(y), int(z)]
 
@@ -83,19 +86,19 @@ def handle_closing():
         {'type': MessageType.Close.name, 'payload': USERNAME})
 
 
-def handle_close():
+def handle_close() -> None:
     # Shouldn't get hit
     logging.info("Close connection")
 
 
-async def send_message(ws, message, recieve, handler):
+async def send_message(ws, message: str, receive: bool, handler: MessageHandler) -> None:
     await ws.send(message)
-    if recieve:
+    if receive:
         server_message = json.loads(await ws.recv())
         message = await parse_message(ws, server_message, handler)
 
 
-async def handle_messages(ws, message, handler):
+async def handle_messages(ws, message: str, handler: MessageHandler) -> None:
     try:
         async for message in ws:
             server_message = json.loads(message)
@@ -104,7 +107,7 @@ async def handle_messages(ws, message, handler):
         pass
 
 
-async def init_connection(message, handler):
+async def init_connection(message: str, handler: MessageHandler) -> None:
     global CLIENT_WS
     uri = WS_URI
     try:
@@ -120,19 +123,28 @@ async def init_connection(message, handler):
             await websocket.close()
     except TimeoutError as err:
         logging.error(f'Could not connect to web server {err}')
-##########################################################
 
 
-def get_connection_retry_time(t):
-    if t == 16:
-        return 16
-    else:
-        return t * 2
+def get_connection_retry_time(time: int) -> int:
+    """Returns time to wait for connection retry
+
+    Args:
+        time (int): current retry wait time
+
+    Returns:
+        int: next retry wait time
+    """
+    return time if (time == 16) else time * 2
 
 
-async def ensure_connection(handler):
+async def ensure_connection(handler: MessageHandler) -> None:
+    """Task that attempts server connection, if connection closes, it waits for retry period.
+
+    Args:
+        handler (MessageHandler): Message handler
+    """
     message = json.dumps({'type': "Auth", 'payload': {
-        'username': 'Mike', 'secret': SHARED_SECRET}})
+        'username': USER_NAME, 'secret': SHARED_SECRET}})
     t = 1
     while True:
         logging.info("Establishing connection")
@@ -151,14 +163,12 @@ async def main():
     start_light = asyncio.create_task(lights.read_light_data(handler))
     start_light.set_name("start light")
 
-    #logging.debug("Starting web socket task")
     connect = asyncio.create_task(ensure_connection(handler))
     connect.set_name("ws connect")
 
     lights.event.set()
 
     await asyncio.gather(connect, start_light)
-    # await asyncio.gather(start_light)
 
 
 if __name__ == '__main__':
