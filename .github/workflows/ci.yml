@@ -63,10 +63,10 @@ jobs:
     - name: build-image
       uses: docker/build-push-action@v1
       with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        repository: ${{ github.repository }}/server
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+        registry: ${{ secrets.REGISTRY_HOST }}
+        repository: ${{ github.repository }}-server
         path: server
         tag_with_ref: true
         push: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -80,9 +80,9 @@ jobs:
     - name: Docker Login
       if: startsWith(github.ref, 'refs/tags/')
       env:
-        REGISTRY_USERNAME: ${{ github.actor }}
-        REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        REGISTRY_HOST: docker.pkg.github.com
+        REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+        REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+        REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
       run: |
         echo "${REGISTRY_PASSWORD}" | docker login ${REGISTRY_HOST} --username "${REGISTRY_USERNAME}" --password-stdin
     - name: Cache Docker layers
@@ -95,11 +95,11 @@ jobs:
           ${{ runner.os }}-buildx-
     - name: Docker Buildx
       env:
-        REGISTRY_HOST: docker.pkg.github.com
+        REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
       run: |
         if [[ $GITHUB_REF == refs/tags/* ]]; then
           PUSH='true'
-          TAGS="--tag ${REGISTRY_HOST}/${{ github.repository }}/client:${GITHUB_REF#refs/tags/v}"
+          TAGS="--tag ${REGISTRY_HOST}/${{ github.repository }}-client:${GITHUB_REF#refs/tags/v}"
         else
           PUSH='false'
           TAGS=''
