@@ -8,7 +8,7 @@ from message_handler import MessageHandler
 from enum import Enum
 import lights
 import logging
-from typing import Tuple
+from typing import Tuple, Any
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,8 +17,6 @@ load_dotenv()
 SHARED_SECRET = os.environ['SHARED_SECRET']
 WS_URI = os.environ['WS_URI']
 USER_NAME = os.environ['USER_NAME']
-
-CLIENT_WS = None
 
 
 class MessageType(Enum):
@@ -31,12 +29,12 @@ class MessageType(Enum):
 
 
 class Message:
-    def __init__(self, message_type: MessageType, payload: any):
+    def __init__(self, message_type: MessageType, payload: Any):
         self.message_type = message_type
         self.payload = payload
 
 
-async def parse_message(ws, message: Message, handler: MessageHandler) -> None:
+async def parse_message(ws: websockets.Connect, message: Message, handler: MessageHandler) -> None:
     message_to_send = ""
     rec_message = Message(message['type'], message['payload'])
     if rec_message.message_type == MessageType.Username.name:
@@ -91,14 +89,14 @@ def handle_close() -> None:
     logging.info("Close connection")
 
 
-async def send_message(ws, message: str, receive: bool, handler: MessageHandler) -> None:
+async def send_message(ws: websockets.Connect, message: str, receive: bool, handler: MessageHandler) -> None:
     await ws.send(message)
     if receive:
         server_message = json.loads(await ws.recv())
         message = await parse_message(ws, server_message, handler)
 
 
-async def handle_messages(ws, message: str, handler: MessageHandler) -> None:
+async def handle_messages(ws: websockets.Connect, message: str, handler: MessageHandler) -> None:
     try:
         async for message in ws:
             server_message = json.loads(message)
@@ -108,14 +106,18 @@ async def handle_messages(ws, message: str, handler: MessageHandler) -> None:
 
 
 async def init_connection(message: str, handler: MessageHandler) -> None:
-    global CLIENT_WS
+    """Initiate websocket connection and bind message handler
+
+    Args:
+        message (str): Auth Message
+        handler (MessageHandler): Message handler
+    """
     uri = WS_URI
     try:
         logging.info("Connecting to server")
         async with websockets.connect(uri) as websocket:
             handler.set_connection(True)
             handler.set_websocket(websocket)
-            CLIENT_WS = websocket
             await websocket.send(message)
             logging.info("Connection is open")
             await handle_messages(websocket, message, handler)
@@ -157,6 +159,8 @@ async def ensure_connection(handler: MessageHandler) -> None:
 
 
 async def main():
+    """Start asyncio tasks
+    """
     handler = MessageHandler()
 
     logging.debug("Starting light task")
@@ -172,6 +176,8 @@ async def main():
 
 
 if __name__ == '__main__':
+    """Bootstrap app
+    """
     lights.loop.set_debug(True)
     logging.basicConfig(level=logging.INFO)
     lights.loop.run_until_complete(main())
