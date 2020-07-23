@@ -80,7 +80,7 @@ jobs:
       uses: crazy-max/ghaction-docker-buildx@v3
 
     - name: Docker Login
-      if: startsWith(github.ref, 'refs/tags/')
+      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
       env:
         REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
         REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
@@ -95,7 +95,7 @@ jobs:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ matrix.project }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-buildx-${{ matrix.project }}-
+          ${{ runner.os }}-buildx
 
     - name: Docker Buildx
       env:
