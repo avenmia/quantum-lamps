@@ -16,7 +16,7 @@ curl https://raw.githubusercontent.com/avenmia/quantum-lamps/master/setup.sh | b
 docker run -d --restart unless-stopped -p 8080:8080 -e SHARED_SECRET=secret -e PORT=8080 avenmia/quantum-lamps-server:latest
 ```
 ## Circuit Diagram
-![Circuit Diagram](https://imgur.com/g6VSTaI)
+[CircuitDiagram](https://i.imgur.com/g6VSTaI.png)
 
 ## Raspberry Pi Deployment
 
