@@ -1,5 +1,8 @@
 FROM arm32v6/python:3.8-alpine
 
+ARG VERSION=dev
+ENV VERSION="${VERSION}"
+
 RUN apk update && \
     apk add --no-cache \
     gcc \

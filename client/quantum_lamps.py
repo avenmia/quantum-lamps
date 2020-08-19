@@ -17,7 +17,7 @@ load_dotenv()
 SHARED_SECRET = os.environ['SHARED_SECRET']
 WS_URI = os.environ['WS_URI']
 USER_NAME = os.environ['USER_NAME']
-
+VERSION = os.environ['VERSION']
 
 class MessageType(Enum):
     Close = 1
@@ -34,7 +34,7 @@ class Message:
         self.payload = payload
 
 
-async def parse_message(ws: websockets.Connect, message: Message, handler: MessageHandler) -> None:
+async def parse_message(ws, message: Message, handler: MessageHandler) -> None:
     message_to_send = ""
     rec_message = Message(message['type'], message['payload'])
     if rec_message.message_type == MessageType.Username.name:
@@ -89,14 +89,14 @@ def handle_close() -> None:
     logging.info("Close connection")
 
 
-async def send_message(ws: websockets.Connect, message: str, receive: bool, handler: MessageHandler) -> None:
+async def send_message(ws, message: str, receive: bool, handler: MessageHandler) -> None:
     await ws.send(message)
     if receive:
         server_message = json.loads(await ws.recv())
         message = await parse_message(ws, server_message, handler)
 
 
-async def handle_messages(ws: websockets.Connect, message: str, handler: MessageHandler) -> None:
+async def handle_messages(ws, message: str, handler: MessageHandler) -> None:
     try:
         async for message in ws:
             server_message = json.loads(message)
@@ -176,6 +176,8 @@ async def main():
 
 
 if __name__ == '__main__':
+    logging.info(f"Starting quantum lamps client")
+    logging.info(f"Version {VERSION}")
     """Bootstrap app
     """
     lights.loop.set_debug(True)

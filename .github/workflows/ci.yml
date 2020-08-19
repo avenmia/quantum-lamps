@@ -122,6 +122,7 @@ jobs:
         fi
 
         docker buildx build \
+          --build-arg VERSION=${{ github.sha }} \
           --cache-from "type=local,src=/tmp/.buildx-cache" \
           --cache-to "type=local,dest=/tmp/.buildx-cache" \
           --output "type=image,push=${PUSH}" \

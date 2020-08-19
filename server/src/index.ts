@@ -2,6 +2,11 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import "dotenv-defaults/config";
 import LampsServer from "./LampsServer";
+import { catService } from "./LogConfig";
+
+catService.info("Starting quantum lamps client ");
+catService.info(`Version ${process.env.VERSION}`);
+
 const app = express();
 
 // define a route handler for the default home page

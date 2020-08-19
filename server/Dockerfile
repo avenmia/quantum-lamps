@@ -1,4 +1,8 @@
 FROM node:12-alpine AS base
+
+ARG VERSION=dev
+ENV VERSION="${VERSION}"
+
 WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 

@@ -18,20 +18,21 @@ docker run \
     -e WS_URI=$ws_uri \
     -e SHARED_SECRET=$shared_secret \
     -e USER_NAME=$user_name \
-    avenmia/quantum-lamps-client:${version:-latest}
+    avenmia/quantum-lamps-client:master
 
 cat << 'EOF' > /etc/cron.hourly/docker-pull-lamps
 #!/bin/bash
 REGISTRY="registry.hub.docker.com"
 REPOSITORY="quantum-lamps-client"
-
-LATEST="`wget -qO- https://$REGISTRY/v1/repositories/$REPOSITORY/tags`"
-LATEST=`echo $LATEST | sed "s/{//g" | sed "s/}//g" | sed "s/\"//g" | cut -d ' ' -f2`
+TAG="master"
 
 RUNNING=`docker inspect "$REGISTRY/$REPOSITORY" | grep Id | sed "s/\"//g" | sed "s/,//g" |  tr -s ' ' | cut -d ' ' -f3`
 
-if [ "$RUNNING" != "$LATEST" ];then
-    docker pull $REGISTRY/$REPOSITORY
+docker pull $REGISTRY/$REPOSITORY
+
+NEW=`docker inspect "$REGISTRY/$REPOSITORY" | grep Id | sed "s/\"//g" | sed "s/,//g" |  tr -s ' ' | cut -d ' ' -f3`
+
+if [ "$RUNNING" != "$NEW" ];then
     docker restart quantum-lamps-client
     echo y | docker system prune -a
 fi
